@@ -1,0 +1,11 @@
+{
+  "type": "project_vearth:moon_dim_type",
+  "generator": {
+    "type": "minecraft:noise",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "project_vearth:moon"
+    },
+    "settings": "project_vearth:moon_noise"
+  }
+}

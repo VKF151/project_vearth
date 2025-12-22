@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "project_vearth:item/space_suit_helmet"
+  }
+}

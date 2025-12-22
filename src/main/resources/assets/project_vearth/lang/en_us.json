@@ -1,0 +1,10 @@
+{
+  "itemgroup.project_vearth": "Project Vearth",
+  "item.project_vearth.mod_icon_item": "Project Vearth",
+  "item.project_vearth.moon_soil": "Regolith",
+  "block.project_vearth.moon_soil": "Regolith",
+  "item.project_vearth.space_suit_helmet": "Space Suit Helmet",
+  "item.project_vearth.space_suit_chestplate": "Space Suit Chestplate",
+  "item.project_vearth.space_suit_leggings": "Space Suit Leggings",
+  "item.project_vearth.space_suit_boots": "Space Suit Boots"
+}

@@ -1,0 +1,49 @@
+{
+  "attributes": {
+    "minecraft:visual/sky_color": "#7ba4ff"
+  },
+  "carvers": [
+    "minecraft:cave",
+    "minecraft:cave_extra_underground",
+    "minecraft:canyon"
+  ],
+  "downfall": 0.5,
+  "effects": {
+    "water_color": "#3938c9"
+  },
+  "features": [
+    [],
+    [
+      "minecraft:lake_lava_underground",
+      "minecraft:lake_lava_surface"
+    ],
+    [
+      "minecraft:monster_room",
+      "minecraft:monster_room_deep"
+    ],
+    [],
+    [
+      "minecraft:ore_iron_upper",
+      "minecraft:ore_iron_middle",
+      "minecraft:ore_iron_small"
+    ],
+    [],
+    [
+      "minecraft:spring_lava"
+    ]
+  ],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "creature": [
+      {
+        "type": "minecraft:breeze",
+        "weight": 1,
+        "minCount": 0,
+        "maxCount": 1
+      }
+    ]
+  },
+  "temperature": 0.5,
+  "temperature_modifier": "frozen"
+}

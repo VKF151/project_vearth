@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "project_vearth:space_suit"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "project_vearth:space_suit"
+      }
+    ]
+  }
+}
