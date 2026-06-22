@@ -1,23 +1,23 @@
 package vance.vearth.components;
 
-import net.minecraft.component.ComponentType;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.core.Registry;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.resources.Identifier;
 import vance.vearth.Project_vearth;
-import net.minecraft.util.dynamic.Codecs;
 
 import java.util.function.UnaryOperator;
 
 public class ModComponents {
 
-    public static final ComponentType<Integer> OXYGEN_STORAGE =
-            register("oxygen_storage", integerBuilder -> integerBuilder.codec(Codecs.NON_NEGATIVE_INT).packetCodec(PacketCodecs.VAR_INT));
+    public static final DataComponentType<Integer> OXYGEN_STORAGE =
+            register("oxygen_storage", integerBuilder -> integerBuilder.persistent(ExtraCodecs.NON_NEGATIVE_INT).networkSynchronized(ByteBufCodecs.VAR_INT));
 
-    private static <T> ComponentType<T> register(String name, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
-        return Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(Project_vearth.MOD_ID, name),
-                builderOperator.apply(ComponentType.builder()).build());
+    private static <T> DataComponentType<T> register(String name, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
+        return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID, name),
+                builderOperator.apply(DataComponentType.builder()).build());
     }
 
     public static void initialize() {

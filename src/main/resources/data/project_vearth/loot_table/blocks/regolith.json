@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "project_vearth:moon_soil"
+          "name": "project_vearth:regolith"
         }
       ],
       "rolls": 1.0

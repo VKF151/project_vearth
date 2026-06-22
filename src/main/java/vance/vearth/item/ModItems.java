@@ -1,76 +1,102 @@
 package vance.vearth.item;
 
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.equipment.EquipmentType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.Block;
 import vance.vearth.Project_vearth;
-import vance.vearth.components.ModComponents;
+import vance.vearth.block.ModBlocks;
 import vance.vearth.item.equipment.ModArmorMaterials;
+import vance.vearth.item.ids.ModBlockItemId;
+import vance.vearth.item.ids.ModBlockItemIds;
+import vance.vearth.item.ids.ModItemIds;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class ModItems {
 
-    public static final Item MOD_ICON_ITEM = registerItem("mod_icon_item", new Item(
-            new Item.Settings()
-                    .registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Project_vearth.MOD_ID, "mod_icon_item")))
+    public static final Item MOD_ICON_ITEM = registerItem(ModItemIds.MOD_ICON,
+            (new Item.Properties())
+    );
+
+    public static final Item SPACE_SUIT_HELMET = registerItem(ModItemIds.SPACE_SUIT_HELMET,
+            (new Item.Properties()
+                    .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.HELMET)
             ));
 
-    public static final Item SPACE_SUIT_HELMET = registerItem("space_suit_helmet", new Item(
-            new Item.Settings()
-                    .registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Project_vearth.MOD_ID, "space_suit_helmet")))
-                    .armor(ModArmorMaterials.SPACE_SUIT , EquipmentType.HELMET)
+    public static final Item SPACE_SUIT_CHESTPLATE = registerItem(ModItemIds.SPACE_SUIT_CHESTPLATE,
+            (new Item.Properties()
+                    .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.CHESTPLATE)
             ));
 
-    public static final Item SPACE_SUIT_CHESTPLATE = registerItem("space_suit_chestplate", new Item(
-            new Item.Settings()
-                    .registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Project_vearth.MOD_ID, "space_suit_chestplate")))
-                    .armor(ModArmorMaterials.SPACE_SUIT, EquipmentType.CHESTPLATE).component(ModComponents.OXYGEN_STORAGE, 1)
+    public static final Item SPACE_SUIT_LEGGINGS = registerItem(ModItemIds.SPACE_SUIT_LEGGINGS,
+            (new Item.Properties()
+                    .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.LEGGINGS)
             ));
 
-    public static final Item SPACE_SUIT_LEGGINGS = registerItem("space_suit_leggings", new Item(
-            new Item.Settings()
-                    .registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Project_vearth.MOD_ID, "space_suit_leggings")))
-                    .armor(ModArmorMaterials.SPACE_SUIT, EquipmentType.LEGGINGS)
+    public static final Item SPACE_SUIT_BOOTS = registerItem(ModItemIds.SPACE_SUIT_BOOTS,
+            (new Item.Properties()
+                    .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.BOOTS)
             ));
 
-    public static final Item SPACE_SUIT_BOOTS = registerItem("space_suit_boots", new Item(
-            new Item.Settings()
-                    .registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Project_vearth.MOD_ID, "space_suit_boots")))
-                    .armor(ModArmorMaterials.SPACE_SUIT, EquipmentType.BOOTS)
-            ));
+    public static final Item REGOLITH =registerBlock(ModBlockItemIds.REGOLITH, ModBlocks.REGOLITH);
 
-    private static Item registerItem(String name, Item item) {
-        return Registry.register(Registries.ITEM, Identifier.of(Project_vearth.MOD_ID, name), item);
+    private static Item registerBlock(final ModBlockItemId id, final Block block) {
+        return registerBlock(id, block, BlockItem::new);
     }
 
-    public static final RegistryKey<ItemGroup> PROJECT_VEARTH_GROUP_KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),
-            Identifier.of(Project_vearth.MOD_ID, "project_vearth_group"));
+    private static Item registerBlock(final ModBlockItemId id, final Block block, final BiFunction<Block, Item.Properties, Item> itemFactory) {
+        return registerBlock(id, block, itemFactory, new Item.Properties());
+    }
 
-    public static final ItemGroup PROJECT_VEARTH_GROUP = FabricItemGroup.builder()
+    private static Item registerBlock(final ModBlockItemId id, final Block block, final BiFunction<Block, Item.Properties, Item> itemFactory, final Item.Properties properties) {
+        return registerItem(id.item(), (p) -> itemFactory.apply(block, p), properties.useBlockDescriptionPrefix().requiredFeatures(block.requiredFeatures()));
+    }
+
+    private static Item registerItem(final ResourceKey<Item> id, final Item.Properties properties) {
+        return registerItem(id, Item::new, properties);
+    }
+
+    private static Item registerItem(final ResourceKey<Item> id, final Function<Item.Properties, Item> itemFactory, final Item.Properties properties) {
+        Item item = itemFactory.apply(properties.setId(id));
+        if (item instanceof BlockItem blockItem) {
+            blockItem.registerBlocks(Item.BY_BLOCK, item);
+        }
+
+        return Registry.register(BuiltInRegistries.ITEM, id, item);
+    }
+
+    public static final ResourceKey<CreativeModeTab> PROJECT_VEARTH_GROUP_KEY = ResourceKey.create(BuiltInRegistries.CREATIVE_MODE_TAB.key(),
+            Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID, "project_vearth_group"));
+
+    public static final CreativeModeTab PROJECT_VEARTH_GROUP = FabricCreativeModeTab.builder()
             .icon(() -> new ItemStack(ModItems.MOD_ICON_ITEM))
-            .displayName(Text.translatable("itemgroup.project_vearth"))
+            .title(Component.translatable("itemgroup.project_vearth"))
             .build();
 
 
     public static void registerModItems() {
         Project_vearth.LOGGER.info("registering items for " + Project_vearth.MOD_ID);
 
-        Registry.register(Registries.ITEM_GROUP, PROJECT_VEARTH_GROUP_KEY, PROJECT_VEARTH_GROUP);
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, PROJECT_VEARTH_GROUP_KEY, PROJECT_VEARTH_GROUP);
 
-        ItemGroupEvents.modifyEntriesEvent(PROJECT_VEARTH_GROUP_KEY).register(fabricItemGroupEntries -> {
-            fabricItemGroupEntries.add(ModItems.MOD_ICON_ITEM);
-            fabricItemGroupEntries.add(ModItems.SPACE_SUIT_HELMET);
-            fabricItemGroupEntries.add(ModItems.SPACE_SUIT_CHESTPLATE);
-            fabricItemGroupEntries.add(ModItems.SPACE_SUIT_LEGGINGS);
-            fabricItemGroupEntries.add(ModItems.SPACE_SUIT_BOOTS);
+        CreativeModeTabEvents.modifyOutputEvent(PROJECT_VEARTH_GROUP_KEY).register(fabricItemGroupEntries -> {
+            fabricItemGroupEntries.accept(ModItems.MOD_ICON_ITEM);
+            fabricItemGroupEntries.accept(ModItems.SPACE_SUIT_HELMET);
+            fabricItemGroupEntries.accept(ModItems.SPACE_SUIT_CHESTPLATE);
+            fabricItemGroupEntries.accept(ModItems.SPACE_SUIT_LEGGINGS);
+            fabricItemGroupEntries.accept(ModItems.SPACE_SUIT_BOOTS);
+            fabricItemGroupEntries.accept(ModItems.REGOLITH);
         });
     }
 

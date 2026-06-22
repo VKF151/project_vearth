@@ -1,40 +1,36 @@
 package vance.vearth.block;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.SandBlock;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.util.ColorCode;
-import net.minecraft.util.Identifier;
-import vance.vearth.Project_vearth;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.ColorRGBA;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SandBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
+import vance.vearth.item.ids.ModBlockItemId;
+import vance.vearth.item.ids.ModBlockItemIds;
+
+import java.util.function.Function;
 
 public class ModBlocks {
-    public static Block register(Block block, String name, boolean shouldRegisterItem) {
-        Identifier id = Identifier.of(Project_vearth.MOD_ID, name);
-
-        if (shouldRegisterItem) {
-            BlockItem blockItem = new BlockItem(block, new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Project_vearth.MOD_ID, name))));
-            Registry.register(Registries.ITEM, id, blockItem);
-        }
-
-        return Registry.register(Registries.BLOCK, id, block);
+    private static Block register(final ModBlockItemId id, final Function<BlockBehaviour.Properties, Block> factory, final BlockBehaviour.Properties properties) {
+        return register(id.block(), factory, properties);
     }
 
-    public static final Block MOON_SOIL = register(
-            new SandBlock(new ColorCode(10000060) ,AbstractBlock.Settings
-                    .create()
-                    .registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(Project_vearth.MOD_ID, "moon_soil")))
-                    .sounds(BlockSoundGroup.ROOTED_DIRT)
-                    .strength(0.5F, 0.5F)),
-                    "moon_soil",
-                    true
-    );
+    public static Block register(final ResourceKey<Block> id, final Function<BlockBehaviour.Properties, Block> factory, final BlockBehaviour.Properties properties) {
+        Block block = factory.apply(properties.setId(id));
+        return Registry.register(BuiltInRegistries.BLOCK, id, block);
+    }
+
+    public static final Block REGOLITH = register(ModBlockItemIds.REGOLITH, (p) ->
+            new SandBlock(new ColorRGBA(10000060), p), BlockBehaviour.Properties.of()
+            .mapColor(MapColor.SAND)
+            .instrument(NoteBlockInstrument.SNARE)
+            .strength(0.5F)
+            .sound(SoundType.SAND));
 
     public static void initialize() {}
 

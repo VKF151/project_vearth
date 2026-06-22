@@ -1,17 +1,17 @@
 package vance.vearth.item.equipment;
 
-import net.minecraft.item.equipment.EquipmentAsset;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.item.equipment.EquipmentAsset;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
 import vance.vearth.Project_vearth;
 
 public interface ModEquipmentAssetKeys {
-    RegistryKey<? extends Registry<EquipmentAsset>> REGISTRY_KEY = RegistryKey.ofRegistry(Identifier.ofVanilla("equipment_asset"));
-    RegistryKey<EquipmentAsset> SPACE_SUIT = register("space_suit");
+    ResourceKey<? extends Registry<EquipmentAsset>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.withDefaultNamespace("equipment_asset"));
+    ResourceKey<EquipmentAsset> SPACE_SUIT = register("space_suit");
 
-    static RegistryKey<EquipmentAsset> register(String name) {
-        return RegistryKey.of(REGISTRY_KEY, Identifier.of(Project_vearth.MOD_ID, name));
+    static ResourceKey<EquipmentAsset> register(String name) {
+        return ResourceKey.create(REGISTRY_KEY, Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID, name));
     }
 
 }

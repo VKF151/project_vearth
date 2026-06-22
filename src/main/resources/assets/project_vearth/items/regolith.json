@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "project_vearth:block/moon_soil"
+    "model": "project_vearth:block/regolith"
   }
 }

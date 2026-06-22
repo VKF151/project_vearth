@@ -315,7 +315,7 @@
             "then_run": {
               "type": "minecraft:block",
               "result_state": {
-                "Name": "project_vearth:moon_soil"
+                "Name": "project_vearth:regolith"
               }
             }
           }
