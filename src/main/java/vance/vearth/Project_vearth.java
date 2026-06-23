@@ -4,7 +4,6 @@ import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vance.vearth.LifeSupport.LifeSupportHandler;
 import vance.vearth.block.ModBlocks;
 import vance.vearth.components.ModComponents;
 import vance.vearth.gravity.GravityHandler;
@@ -19,7 +18,6 @@ public class Project_vearth implements ModInitializer {
 		ModItems.registerModItems();
 		ModBlocks.initialize();
 		GravityHandler.register();
-		LifeSupportHandler.register();
 		ModComponents.initialize();
 	}
 }

@@ -15,6 +15,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import vance.vearth.Project_vearth;
 import vance.vearth.block.ModBlocks;
+import vance.vearth.components.ModComponents;
 import vance.vearth.item.equipment.ModArmorMaterials;
 import vance.vearth.item.ids.ModBlockItemId;
 import vance.vearth.item.ids.ModBlockItemIds;
@@ -32,21 +33,26 @@ public class ModItems {
     public static final Item SPACE_SUIT_HELMET = registerItem(ModItemIds.SPACE_SUIT_HELMET,
             (new Item.Properties()
                     .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.HELMET)
+                    .component(ModComponents.AIR_TIGHT, true)
             ));
 
     public static final Item SPACE_SUIT_CHESTPLATE = registerItem(ModItemIds.SPACE_SUIT_CHESTPLATE,
             (new Item.Properties()
                     .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.CHESTPLATE)
+                    .component(ModComponents.AIR_TIGHT, true)
+                    .component(ModComponents.OXYGEN_STORAGE, 0)
             ));
 
     public static final Item SPACE_SUIT_LEGGINGS = registerItem(ModItemIds.SPACE_SUIT_LEGGINGS,
             (new Item.Properties()
                     .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.LEGGINGS)
+                    .component(ModComponents.AIR_TIGHT, true)
             ));
 
     public static final Item SPACE_SUIT_BOOTS = registerItem(ModItemIds.SPACE_SUIT_BOOTS,
             (new Item.Properties()
                     .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.BOOTS)
+                    .component(ModComponents.AIR_TIGHT, true)
             ));
 
     public static final Item REGOLITH =registerBlock(ModBlockItemIds.REGOLITH, ModBlocks.REGOLITH);
