@@ -10,6 +10,8 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
+import vance.vearth.block.custom.VearthPortalBlock;
 import vance.vearth.item.ids.ModBlockItemId;
 import vance.vearth.item.ids.ModBlockItemIds;
 
@@ -31,6 +33,12 @@ public class ModBlocks {
             .instrument(NoteBlockInstrument.SNARE)
             .strength(0.5F)
             .sound(SoundType.SAND));
+
+    public static final Block VEARTH_PORTAL = register(
+            ModBlockItemIds.VEARTH_PORTAL,
+            VearthPortalBlock::new,
+            BlockBehaviour.Properties.of().noCollision().randomTicks().strength(-1.0F).sound(SoundType.GLASS).lightLevel(statex -> 11).pushReaction(PushReaction.BLOCK)
+    );
 
     public static void initialize() {}
 
