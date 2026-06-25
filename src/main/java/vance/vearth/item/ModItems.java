@@ -17,9 +17,9 @@ import vance.vearth.Project_vearth;
 import vance.vearth.block.ModBlocks;
 import vance.vearth.components.ModComponents;
 import vance.vearth.item.equipment.ModArmorMaterials;
-import vance.vearth.item.ids.ModBlockItemId;
-import vance.vearth.item.ids.ModBlockItemIds;
-import vance.vearth.item.ids.ModItemIds;
+import vance.vearth.resources.Identifier.ModBlockItemId;
+import vance.vearth.resources.Identifier.ModBlockItemIds;
+import vance.vearth.resources.Identifier.ModItemIds;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

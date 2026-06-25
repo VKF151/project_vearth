@@ -1,7 +1,4 @@
 {
-  "attributes": {
-    "minecraft:visual/sky_color": "#7ba4ff"
-  },
   "carvers": [
     "minecraft:cave",
     "minecraft:cave_extra_underground",
