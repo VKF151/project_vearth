@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "project_vearth:item/mod_icon_item"
+    "model": "project_vearth:item/mod_icon"
   }
 }
