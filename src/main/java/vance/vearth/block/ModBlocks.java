@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import vance.vearth.block.custom.VearthPortalBlock;
-import vance.vearth.item.ids.ModBlockItemId;
-import vance.vearth.item.ids.ModBlockItemIds;
+import vance.vearth.resources.Identifier.ModBlockItemId;
+import vance.vearth.resources.Identifier.ModBlockItemIds;
 
 import java.util.function.Function;
 

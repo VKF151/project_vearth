@@ -1,4 +1,4 @@
-package vance.vearth.item.ids;
+package vance.vearth.resources.Identifier;
 
 public class ModBlockItemIds {
     public static final ModBlockItemId REGOLITH = ModBlockItemId.create("regolith");

@@ -31,7 +31,7 @@ public abstract class EntityFreezingMixin extends Entity{
         super(type, level);
     }
 
-    @Inject(method = "baseTick", at = @At(value = "TAIL", target = "Lnet/minecraft/world/entity/Entity;baseTick()V"), cancellable = true)
+    @Inject(method = "baseTick", at = @At(value = "TAIL", target = "Lnet/minecraft/world/entity/Entity;baseTick()V"))
     private void freezingCheck(CallbackInfo ci) {
         LivingEntity instance = (LivingEntity) (Object) this;
         if (instance.isAlive() && !isCreativePlayer() && !instance.isSpectator() && instance.level() instanceof ServerLevel level) {
@@ -83,10 +83,13 @@ public abstract class EntityFreezingMixin extends Entity{
         return isWearingSealedSuit(player) && player.getItemBySlot(EquipmentSlot.CHEST).get(ModComponents.OXYGEN_STORAGE) != null && player.getItemBySlot(EquipmentSlot.CHEST).get(ModComponents.OXYGEN_STORAGE) > 0;
     }
 
+    @Unique
+    private int suffocationDamageThreshold;
 
     @Unique
     protected int decreaseAirSupplyFast(final int currentSupply) {
         LivingEntity instance = (LivingEntity) (Object) this;
+        int airLossPerTick;
         AttributeInstance respiration = instance.getAttribute(Attributes.OXYGEN_BONUS);
         double oxygenBonus;
         if (respiration != null) {
@@ -94,15 +97,20 @@ public abstract class EntityFreezingMixin extends Entity{
         } else {
             oxygenBonus = 0.0;
         }
-
-        return oxygenBonus > 0.0 && random.nextDouble() >= 1.0 / (oxygenBonus + 1.0) ? currentSupply : currentSupply - 20;
+        if (instance.getBlockStateOn().is(Blocks.SCULK)) {
+            airLossPerTick = 2;
+        }else {
+            airLossPerTick = 20;
+        }
+        suffocationDamageThreshold = airLossPerTick * (-20);
+        return oxygenBonus > 0.0 && random.nextDouble() >= 1.0 / (oxygenBonus + 1.0) ? currentSupply : currentSupply - airLossPerTick;
     }
 
 
     @Unique
     protected boolean shouldTakeSuffocationDamage() {
         LivingEntity instance = (LivingEntity) (Object) this;
-        return instance.getAirSupply() <= -400;
+        return instance.getAirSupply() <= suffocationDamageThreshold;
     }
 
     public boolean isCreativePlayer() {

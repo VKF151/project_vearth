@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vance.vearth.block.ModBlocks;
 import vance.vearth.components.ModComponents;
-import vance.vearth.gravity.GravityHandler;
 import vance.vearth.item.ModItems;
 
 public class Project_vearth implements ModInitializer {
@@ -19,7 +18,6 @@ public class Project_vearth implements ModInitializer {
 	public void onInitialize() {
 		ModItems.registerModItems();
 		ModBlocks.initialize();
-		GravityHandler.register();
 		ModComponents.initialize();
 		PoiHelper.register(Identifier.fromNamespaceAndPath(MOD_ID, "vearth_portal"), 0, 1, ModBlocks.VEARTH_PORTAL);
 	}
