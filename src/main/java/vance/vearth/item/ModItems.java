@@ -56,6 +56,8 @@ public class ModItems {
             ));
 
     public static final Item REGOLITH =registerBlock(ModBlockItemIds.REGOLITH, ModBlocks.REGOLITH);
+    public static final Item OPEN_ECHOFLOWER =registerBlock(ModBlockItemIds.OPEN_ECHOFLOWER, ModBlocks.OPEN_ECHOFLOWER);
+    public static final Item CLOSED_ECHOFLOWER =registerBlock(ModBlockItemIds.CLOSED_ECHOFLOWER, ModBlocks.CLOSED_ECHOFLOWER);
 
     private static Item registerBlock(final ModBlockItemId id, final Block block) {
         return registerBlock(id, block, BlockItem::new);
@@ -103,6 +105,8 @@ public class ModItems {
             fabricItemGroupEntries.accept(ModItems.SPACE_SUIT_LEGGINGS);
             fabricItemGroupEntries.accept(ModItems.SPACE_SUIT_BOOTS);
             fabricItemGroupEntries.accept(ModItems.REGOLITH);
+            fabricItemGroupEntries.accept(ModItems.OPEN_ECHOFLOWER);
+            fabricItemGroupEntries.accept(ModItems.CLOSED_ECHOFLOWER);
         });
     }
 

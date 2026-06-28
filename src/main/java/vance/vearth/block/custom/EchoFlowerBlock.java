@@ -1,106 +1,96 @@
 package vance.vearth.block.custom;
 
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.Holder;
+import net.minecraft.core.particles.TrailParticleOption;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.BlockUtil;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.Relative;
+import net.minecraft.world.entity.animal.bee.Bee;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ScheduledTickAccess;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FlowerBlock;
+import net.minecraft.world.level.block.Portal;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import vance.vearth.block.ModBlocks;
 import vance.vearth.world.dimension.ModDims;
 import vance.vearth.world.dimension.portal.VearthPortalForcer;
 
-import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
-public class VearthPortalBlock extends Block implements Portal {
+import static vance.vearth.block.custom.VearthPortalBlock.AXIS;
+
+public class EchoFlowerBlock extends FlowerBlock implements Portal {
     private static final Logger LOGGER = LogUtils.getLogger();
-    public static final MapCodec<VearthPortalBlock> CODEC = simpleCodec(VearthPortalBlock::new);
-    public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
-    private static final Map<Direction.Axis, VoxelShape> SHAPES = Shapes.rotateHorizontalAxis(Block.column(4.0, 16.0, 0.0, 16.0));
+    public static final MapCodec<EchoFlowerBlock> CODEC = RecordCodecBuilder.mapCodec(
+            i -> i.group(Codec.BOOL.fieldOf("open").forGetter(e -> e.type.open), propertiesCodec()).apply(i, EchoFlowerBlock::new)
+    );
+    private final EchoFlowerBlock.Type type;
 
     @Override
-    public @NonNull MapCodec<VearthPortalBlock> codec() {
+    public @NonNull MapCodec<? extends EchoFlowerBlock> codec() {
         return CODEC;
     }
 
-    public VearthPortalBlock(Properties properties) {
-        super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(AXIS, Direction.Axis.X));
+    public EchoFlowerBlock(final EchoFlowerBlock.Type type, final BlockBehaviour.Properties properties) {
+        super(type.effect, type.effectDuration, properties);
+        this.type = type;
+    }
+
+    public EchoFlowerBlock(final boolean open, final BlockBehaviour.Properties properties) {
+        super(EchoFlowerBlock.Type.fromBoolean(open).effect, EchoFlowerBlock.Type.fromBoolean(open).effectDuration, properties);
+        this.type = EchoFlowerBlock.Type.fromBoolean(open);
     }
 
     @Override
-    protected @NonNull VoxelShape getShape(final BlockState state, final @NonNull BlockGetter level, final @NonNull BlockPos pos, final @NonNull CollisionContext context) {
-        return SHAPES.get(state.getValue(AXIS));
-    }
-
-    @Override
-    protected @NonNull BlockState updateShape(
-            final BlockState state,
-            final @NonNull LevelReader level,
-            final @NonNull ScheduledTickAccess ticks,
-            final @NonNull BlockPos pos,
-            final Direction directionToNeighbour,
-            final @NonNull BlockPos neighbourPos,
-            final @NonNull BlockState neighbourState,
-            final @NonNull RandomSource random
-    ) {
-        Direction.Axis updateAxis = directionToNeighbour.getAxis();
-        Direction.Axis axis = state.getValue(AXIS);
-        boolean wrongAxis = axis != updateAxis && updateAxis.isHorizontal();
-        return !wrongAxis && !neighbourState.is(this) && !PortalShape.findAnyShape(level, pos, axis).isComplete()
-                ? Blocks.AIR.defaultBlockState()
-                : super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
-    }
-
-    @Override
-    protected void entityInside(
-            final @NonNull BlockState state, final @NonNull Level level, final @NonNull BlockPos pos, final Entity entity, final @NonNull InsideBlockEffectApplier effectApplier, final boolean isPrecise
-    ) {
-        if (entity.canUsePortal(false)) {
-            entity.setAsInsidePortal(this, pos);
-        }
+    protected boolean mayPlaceOn(BlockState state, @NonNull BlockGetter level, @NonNull BlockPos pos) {
+        return state.is(Blocks.SCULK)|| state.is(ModBlocks.REGOLITH) || state.is(BlockTags.SUPPORTS_VEGETATION) || state.is(Blocks.SMOOTH_BASALT);
     }
 
     @Override
     protected @NonNull InteractionResult useItemOn(@NonNull ItemStack itemStack, @NonNull BlockState state, @NonNull Level level, @NonNull BlockPos pos, Player player, @NonNull InteractionHand hand, @NonNull BlockHitResult hitResult) {
         ItemStack handStack = player.getItemInHand(hand);
         boolean isValid = !handStack.isEmpty() && handStack.getItem().equals(Items.ENDER_PEARL);
-        if (isValid && !player.isCrouching() && player.canUsePortal(false)){
+        if (isValid && !player.isCrouching() && player.canUsePortal(false) && this.type.open){
             player.setAsInsidePortal(this, pos);
             return InteractionResult.SUCCESS;
         }
@@ -108,8 +98,70 @@ public class VearthPortalBlock extends Block implements Portal {
     }
 
     @Override
-    public int getPortalTransitionTime(final @NonNull ServerLevel level, final @NonNull Entity entity) {
-        return 0;
+    public void animateTick(final @NonNull BlockState state, final @NonNull Level level, final @NonNull BlockPos pos, final @NonNull RandomSource random) {
+        if (this.type.emitSounds() && random.nextInt(700) == 0) {
+            BlockState below = level.getBlockState(pos.below());
+            if (below.is(Blocks.SCULK)) {
+                level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.EYEBLOSSOM_IDLE, SoundSource.AMBIENT, 1.0F, 1.0F, false);
+            }
+        }
+    }
+
+    @Override
+    protected void randomTick(final @NonNull BlockState state, final @NonNull ServerLevel level, final @NonNull BlockPos pos, final @NonNull RandomSource random) {
+        if (this.tryChangingState(state, level, pos, random)) {
+            level.playSound(null, pos, this.type.transform().longSwitchSound, SoundSource.BLOCKS, 1.0F, 1.0F);
+        }
+
+        super.randomTick(state, level, pos, random);
+    }
+
+    @Override
+    protected void tick(final @NonNull BlockState state, final @NonNull ServerLevel level, final @NonNull BlockPos pos, final @NonNull RandomSource random) {
+        if (this.tryChangingState(state, level, pos, random)) {
+            level.playSound(null, pos, this.type.transform().shortSwitchSound, SoundSource.BLOCKS, 1.0F, 1.0F);
+        }
+
+        super.tick(state, level, pos, random);
+    }
+
+    private boolean tryChangingState(final BlockState state, final ServerLevel level, final BlockPos pos, final RandomSource random) {
+        boolean shouldBeOpen = level.environmentAttributes().getValue(EnvironmentAttributes.EYEBLOSSOM_OPEN, pos).toBoolean(this.type.open);
+        if (shouldBeOpen == this.type.open) {
+            return false;
+        }
+
+        EchoFlowerBlock.Type newType = this.type.transform();
+        level.setBlock(pos, newType.state(), 3);
+        level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
+        newType.spawnTransformParticle(level, pos, random);
+        BlockPos.betweenClosed(pos.offset(-3, -2, -3), pos.offset(3, 2, 3)).forEach(nearby -> {
+            BlockState nearbyState = level.getBlockState(nearby);
+            if (nearbyState == state) {
+                double distance = Math.sqrt(pos.distSqr(nearby));
+                int delay = random.nextIntBetweenInclusive((int)(distance * 5.0), (int)(distance * 10.0));
+                level.scheduleTick(nearby, state.getBlock(), delay);
+            }
+        });
+        return true;
+    }
+
+    @Override
+    protected void entityInside(
+            final @NonNull BlockState state, final Level level, final @NonNull BlockPos pos, final @NonNull Entity entity, final @NonNull InsideBlockEffectApplier effectApplier, final boolean isPrecise
+    ) {
+        if (!level.isClientSide()
+                && level.getDifficulty() != Difficulty.PEACEFUL
+                && entity instanceof Bee bee
+                && Bee.attractsBees(state)
+                && !bee.hasEffect(MobEffects.POISON)) {
+            bee.addEffect(Objects.requireNonNull(this.getBeeInteractionEffect()));
+        }
+    }
+
+    @Override
+    public MobEffectInstance getBeeInteractionEffect() {
+        return new MobEffectInstance(MobEffects.POISON, 25);
     }
 
     @Override
@@ -143,7 +195,7 @@ public class VearthPortalBlock extends Block implements Portal {
             BlockPos pos = exitPortalPos.get();
             BlockState portalState = newLevel.getBlockState(pos);
             exitPortal = BlockUtil.getLargestRectangleAround(
-                    pos, portalState.getValue(BlockStateProperties.HORIZONTAL_AXIS), 21, Direction.Axis.Y, 21, blockPos -> newLevel.getBlockState(blockPos) == portalState
+                    pos, Direction.Axis.X, 21, Direction.Axis.Y, 21, blockPos -> newLevel.getBlockState(blockPos) == portalState
             );
             post = TeleportTransition.PLAY_PORTAL_SOUND.then(e -> e.placePortalTicket(pos));
         } else {
@@ -160,7 +212,6 @@ public class VearthPortalBlock extends Block implements Portal {
 
         return getDimensionTransitionFromExit(entity, portalEntryPos, exitPortal, newLevel, post);
     }
-
     private static TeleportTransition getDimensionTransitionFromExit(
             final Entity entity,
             final BlockPos portalEntryPos,
@@ -213,58 +264,60 @@ public class VearthPortalBlock extends Block implements Portal {
         );
     }
 
-    @Override
-    public Portal.@NonNull Transition getLocalTransition() {
-        return Portal.Transition.CONFUSION;
-    }
+    public enum Type {
+        OPEN(true, MobEffects.DARKNESS, 11.0F, SoundEvents.EYEBLOSSOM_OPEN_LONG, SoundEvents.EYEBLOSSOM_OPEN, 16545810),
+        CLOSED(false, MobEffects.WITHER, 7.0F, SoundEvents.EYEBLOSSOM_CLOSE_LONG, SoundEvents.EYEBLOSSOM_CLOSE, 6250335);
 
-    @Override
-    public void animateTick(final @NonNull BlockState state, final @NonNull Level level, final @NonNull BlockPos pos, final RandomSource random) {
-        if (random.nextInt(100) == 0) {
-            level.playLocalSound(
-                    pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, SoundEvents.PORTAL_AMBIENT, SoundSource.BLOCKS, 0.5F, random.nextFloat() * 0.4F + 0.8F, false
-            );
+        private final boolean open;
+        private final Holder<MobEffect> effect;
+        private final float effectDuration;
+        private final SoundEvent longSwitchSound;
+        private final SoundEvent shortSwitchSound;
+        private final int particleColor;
+
+        Type(
+                final boolean open,
+                final Holder<MobEffect> effect,
+                final float duration,
+                final SoundEvent longSwitchSound,
+                final SoundEvent shortSwitchSound,
+                final int particleColor
+        ) {
+            this.open = open;
+            this.effect = effect;
+            this.effectDuration = duration;
+            this.longSwitchSound = longSwitchSound;
+            this.shortSwitchSound = shortSwitchSound;
+            this.particleColor = particleColor;
         }
 
-        for (int i = 0; i < 4; i++) {
-            double x = pos.getX() + random.nextDouble();
-            double y = pos.getY() + random.nextDouble();
-            double z = pos.getZ() + random.nextDouble();
-            double xa = (random.nextFloat() - 0.5) * 0.5;
-            double ya = (random.nextFloat() - 0.5) * 0.5;
-            double za = (random.nextFloat() - 0.5) * 0.5;
-            int flip = random.nextInt(2) * 2 - 1;
-            if (!level.getBlockState(pos.west()).is(this) && !level.getBlockState(pos.east()).is(this)) {
-                x = pos.getX() + 0.5 + 0.25 * flip;
-                xa = random.nextFloat() * 2.0F * flip;
-            } else {
-                z = pos.getZ() + 0.5 + 0.25 * flip;
-                za = random.nextFloat() * 2.0F * flip;
-            }
-
-            level.addParticle(ParticleTypes.PORTAL, x, y, z, xa, ya, za);
+        public Block block() {
+            return this.open ? ModBlocks.OPEN_ECHOFLOWER : ModBlocks.CLOSED_ECHOFLOWER;
         }
-    }
 
-    @Override
-    protected @NonNull ItemStack getCloneItemStack(final @NonNull LevelReader level, final @NonNull BlockPos pos, final @NonNull BlockState state, final boolean includeData) {
-        return ItemStack.EMPTY;
-    }
+        public BlockState state() {
+            return this.block().defaultBlockState();
+        }
 
-    @Override
-    protected @NonNull BlockState rotate(final @NonNull BlockState state, final Rotation rotation) {
-        return switch (rotation) {
-            case COUNTERCLOCKWISE_90, CLOCKWISE_90 -> switch (state.getValue(AXIS)) {
-                case X -> state.setValue(AXIS, Direction.Axis.Z);
-                case Z -> state.setValue(AXIS, Direction.Axis.X);
-                default -> state;
-            };
-            default -> state;
-        };
-    }
+        public EchoFlowerBlock.Type transform() {
+            return fromBoolean(!this.open);
+        }
 
-    @Override
-    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(AXIS);
+        public boolean emitSounds() {
+            return this.open;
+        }
+
+        public static EchoFlowerBlock.Type fromBoolean(final boolean open) {
+            return open ? OPEN : CLOSED;
+        }
+
+        public void spawnTransformParticle(final ServerLevel level, final BlockPos pos, final RandomSource random) {
+            Vec3 start = Vec3.atCenterOf(pos);
+            double lifetime = 0.5 + random.nextDouble();
+            Vec3 velocity = new Vec3(random.nextDouble() - 0.5, random.nextDouble() + 1.0, random.nextDouble() - 0.5);
+            Vec3 target = start.add(velocity.scale(lifetime));
+            TrailParticleOption particle = new TrailParticleOption(target, this.particleColor, (int)(20.0 * lifetime));
+            level.sendParticles(particle, start.x, start.y, start.z, 1, 0.0, 0.0, 0.0, 0.0);
+        }
     }
 }

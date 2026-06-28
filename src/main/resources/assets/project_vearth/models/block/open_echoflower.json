@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cross_emissive",
+  "textures": {
+    "cross": "project_vearth:block/open_echoflower",
+    "cross_emissive": "project_vearth:block/open_echoflower_emissive"
+  }
+}

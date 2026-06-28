@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "project_vearth:block/open_echoflower",
+    "layer1": "project_vearth:block/open_echoflower_emissive"
+  }
+}

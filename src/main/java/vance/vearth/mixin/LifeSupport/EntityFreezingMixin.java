@@ -23,7 +23,7 @@ import vance.vearth.components.ModComponents;
 import vance.vearth.world.dimension.ModDims;
 
 @Mixin(LivingEntity.class)
-public abstract class EntityFreezingMixin extends Entity{
+public abstract class EntityFreezingMixin extends Entity {
     @Unique
     protected final RandomSource random = RandomSource.create();
 
@@ -113,6 +113,7 @@ public abstract class EntityFreezingMixin extends Entity{
         return instance.getAirSupply() <= suffocationDamageThreshold;
     }
 
+    @Unique
     public boolean isCreativePlayer() {
         LivingEntity instance = (LivingEntity) (Object) this;
         return instance instanceof Player player && player.getAbilities().instabuild;

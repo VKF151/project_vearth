@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "project_vearth:block/closed_echoflower"
+  }
+}

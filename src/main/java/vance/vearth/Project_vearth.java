@@ -21,6 +21,6 @@ public class Project_vearth implements ModInitializer {
 		ModBlocks.initialize();
 		ModComponents.initialize();
 		GravityHandler.register();
-		PoiHelper.register(Identifier.fromNamespaceAndPath(MOD_ID, "vearth_portal"), 0, 1, ModBlocks.VEARTH_PORTAL);
+		PoiHelper.register(Identifier.fromNamespaceAndPath(MOD_ID, "vearth_portal"), 0, 1, ModBlocks.OPEN_ECHOFLOWER);
 	}
 }

@@ -6,5 +6,7 @@
   "item.project_vearth.space_suit_helmet": "Space Suit Helmet",
   "item.project_vearth.space_suit_chestplate": "Space Suit Chestplate",
   "item.project_vearth.space_suit_leggings": "Space Suit Leggings",
-  "item.project_vearth.space_suit_boots": "Space Suit Boots"
+  "item.project_vearth.space_suit_boots": "Space Suit Boots",
+  "block.project_vearth.open_echoflower": "Open Echoflower",
+  "block.project_vearth.closed_echoflower": "Closed Echoflower"
 }

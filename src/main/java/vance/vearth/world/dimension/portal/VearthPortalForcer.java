@@ -14,31 +14,16 @@ import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.levelgen.Heightmap;
 import vance.vearth.Project_vearth;
 import vance.vearth.block.ModBlocks;
-import vance.vearth.block.custom.VearthPortalBlock;
 
 import java.util.Comparator;
 import java.util.Optional;
 
 
 public class VearthPortalForcer {
-    public static final int TICKET_RADIUS = 3;
-    private static final int NETHER_PORTAL_RADIUS = 16;
-    private static final int OVERWORLD_PORTAL_RADIUS = 128;
-    private static final int FRAME_HEIGHT = 5;
-    private static final int FRAME_WIDTH = 4;
-    private static final int FRAME_BOX = 3;
-    private static final int FRAME_HEIGHT_START = -1;
-    private static final int FRAME_HEIGHT_END = 4;
-    private static final int FRAME_WIDTH_START = -1;
-    private static final int FRAME_WIDTH_END = 3;
-    private static final int FRAME_BOX_START = -1;
-    private static final int FRAME_BOX_END = 2;
-    private static final int NOTHING_FOUND = -1;
     private final ServerLevel level;
     public static final ResourceKey<PoiType> VEARTH_PORTAL = ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID, "vearth_portal"));
 
@@ -53,11 +38,11 @@ public class VearthPortalForcer {
         return poiManager.getInSquare(type -> type.is(VEARTH_PORTAL), approximateExitPos, radius, PoiManager.Occupancy.ANY)
                 .map(PoiRecord::getPos)
                 .filter(worldBorder::isWithinBounds)
-                .filter(pos -> this.level.getBlockState(pos).hasProperty(BlockStateProperties.HORIZONTAL_AXIS))
                 .min(Comparator.<BlockPos>comparingDouble(p -> p.distSqr(approximateExitPos)).thenComparingInt(Vec3i::getY));
     }
 
-    public Optional<BlockUtil.FoundRectangle> createPortal(final BlockPos origin, final Direction.Axis portalAxis) {
+    public Optional<BlockUtil.FoundRectangle> createPortal(final BlockPos origin, Direction.Axis portalAxis) {
+        portalAxis = (portalAxis == null) ? Direction.Axis.X : portalAxis;
         Direction direction = Direction.get(Direction.AxisDirection.POSITIVE, portalAxis);
         double closestFullDistanceSqr = -1.0;
         BlockPos closestFullPosition = null;
@@ -65,7 +50,6 @@ public class VearthPortalForcer {
         BlockPos closestPartialPosition = null;
         WorldBorder worldBorder = this.level.getWorldBorder();
         int maxPlaceableY = Math.min(this.level.getMaxY(), this.level.getMinY() + this.level.getLogicalHeight() - 1);
-        int edgeDistance = 1;
         BlockPos.MutableBlockPos mutable = origin.mutable();
 
         for (BlockPos.MutableBlockPos columnPos : BlockPos.spiralAround(origin, 16, Direction.EAST, Direction.SOUTH)) {
@@ -73,13 +57,13 @@ public class VearthPortalForcer {
             if (worldBorder.isWithinBounds(columnPos) && worldBorder.isWithinBounds(columnPos.move(direction, 1))) {
                 columnPos.move(direction.getOpposite(), 1);
 
-                for (int y = height; y >= this.level.getMinY(); y--) {
+                for (int y = (height - (height - 1)); y <= this.level.getMaxY(); y++) {
                     columnPos.setY(y);
                     if (this.canPortalReplaceBlock(columnPos)) {
                         int firstEmptyY = y;
 
-                        while (y > this.level.getMinY() && this.canPortalReplaceBlock(columnPos.move(Direction.DOWN))) {
-                            y--;
+                        while (y < this.level.getMaxY() && this.canPortalReplaceBlock(columnPos.move(Direction.DOWN))) {
+                            y++;
                         }
 
                         if (y + 4 <= maxPlaceableY) {
@@ -120,7 +104,7 @@ public class VearthPortalForcer {
             }
 
             closestFullPosition = new BlockPos(
-                    origin.getX() - direction.getStepX() * 1, Mth.clamp(origin.getY(), minStartY, maxStartY), origin.getZ() - direction.getStepZ() * 1
+                    origin.getX() - direction.getStepX(), Mth.clamp(origin.getY(), minStartY, maxStartY), origin.getZ() - direction.getStepZ()
             )
                     .immutable();
             closestFullPosition = worldBorder.clampToBounds(closestFullPosition);
@@ -138,7 +122,7 @@ public class VearthPortalForcer {
                 }
             }
         }
-
+        /*
         for (int width = -1; width < 3; width++) {
             for (int height = -1; height < 4; height++) {
                 if (width == -1 || width == 2 || height == -1 || height == 3) {
@@ -155,7 +139,9 @@ public class VearthPortalForcer {
                 mutable.setWithOffset(closestFullPosition, width * direction.getStepX(), height, width * direction.getStepZ());
                 this.level.setBlock(mutable, portalBlockState, 18);
             }
-        }
+        } */
+        mutable.set(closestFullPosition);
+        this.level.setBlock(mutable, ModBlocks.OPEN_ECHOFLOWER.defaultBlockState(), 18);
 
         return Optional.of(new BlockUtil.FoundRectangle(closestFullPosition.immutable(), 2, 3));
     }
@@ -173,7 +159,7 @@ public class VearthPortalForcer {
                 mutable.setWithOffset(
                         origin, direction.getStepX() * width + clockWise.getStepX() * offset, height, direction.getStepZ() * width + clockWise.getStepZ() * offset
                 );
-                if (height < 0 && !this.level.getBlockState(mutable).isSolid()) {
+                if (height < 0 && !this.level.getBlockState(mutable).isCollisionShapeFullBlock(this.level, mutable)) {
                     return false;
                 }
 
