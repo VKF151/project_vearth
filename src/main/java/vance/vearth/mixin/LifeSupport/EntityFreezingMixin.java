@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,8 +23,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import vance.vearth.components.ModComponents;
 import vance.vearth.world.dimension.ModDims;
 
+import java.util.stream.Stream;
+
 @Mixin(LivingEntity.class)
 public abstract class EntityFreezingMixin extends Entity {
+
     @Unique
     protected final RandomSource random = RandomSource.create();
 
@@ -35,7 +39,7 @@ public abstract class EntityFreezingMixin extends Entity {
     private void freezingCheck(CallbackInfo ci) {
         LivingEntity instance = (LivingEntity) (Object) this;
         if (instance.isAlive() && !isCreativePlayer() && !instance.isSpectator() && instance.level() instanceof ServerLevel level) {
-            if (instance.canFreeze() && instance.level().dimension().equals(ModDims.MOON_KEY) && !isWearingSealedSuit(instance)) {
+            if (instance.canFreeze() && instance.level().dimension().equals(ModDims.MOON_KEY) && !isProperlyInsulated(instance)) {
                 instance.setIsInPowderSnow(true);
                 instance.setTicksFrozen(Math.min(instance.getTicksRequiredToFreeze(), instance.getTicksFrozen() + 2));
             }
@@ -46,6 +50,10 @@ public abstract class EntityFreezingMixin extends Entity {
                     level.broadcastEntityEvent(instance, (byte) 67);
                     instance.hurtServer(level, instance.damageSources().inWall(), 2.0F);
                 }
+            } else if (instance.level().dimension().equals(ModDims.MOON_KEY) && suitHasOxygen(instance) && instance.getItemBySlot(EquipmentSlot.CHEST).get(ModComponents.OXYGEN_STORAGE) != null) {
+                decreaseSuitOxygen(instance, instance.getItemBySlot(EquipmentSlot.CHEST).get(ModComponents.OXYGEN_STORAGE));
+            } else if (!instance.level().dimension().equals(ModDims.MOON_KEY) && instance.getItemBySlot(EquipmentSlot.CHEST).get(ModComponents.OXYGEN_STORAGE) != null) {
+                increaseSuitOxygen(instance, instance.getItemBySlot(EquipmentSlot.CHEST).get(ModComponents.OXYGEN_STORAGE));
             }
         }
     }
@@ -72,15 +80,53 @@ public abstract class EntityFreezingMixin extends Entity {
 
     @Unique
     private static boolean isWearingSealedSuit(LivingEntity player) {
-        return player.getItemBySlot(EquipmentSlot.HEAD).getComponents().has(ModComponents.AIR_TIGHT)
-                && player.getItemBySlot(EquipmentSlot.CHEST).getComponents().has(ModComponents.AIR_TIGHT)
-                && player.getItemBySlot(EquipmentSlot.LEGS).getComponents().has(ModComponents.AIR_TIGHT)
-                && player.getItemBySlot(EquipmentSlot.FEET).getComponents().has(ModComponents.AIR_TIGHT);
+        return (player.getItemBySlot(EquipmentSlot.HEAD).getComponents().has(ModComponents.SEALED)
+                && player.getItemBySlot(EquipmentSlot.CHEST).getComponents().has(ModComponents.SEALED)
+                && player.getItemBySlot(EquipmentSlot.LEGS).getComponents().has(ModComponents.SEALED)
+                && player.getItemBySlot(EquipmentSlot.FEET).getComponents().has(ModComponents.SEALED))
+                || isWearingMembrane(player);
+    }
+    @Unique
+    private static boolean isWearingMembrane(LivingEntity player) {
+        return player.getItemBySlot(EquipmentSlot.HEAD).getComponents().has(ModComponents.MEMBRANED)
+                || player.getItemBySlot(EquipmentSlot.CHEST).getComponents().has(ModComponents.MEMBRANED)
+                || player.getItemBySlot(EquipmentSlot.LEGS).getComponents().has(ModComponents.MEMBRANED)
+                || player.getItemBySlot(EquipmentSlot.FEET).getComponents().has(ModComponents.MEMBRANED);
     }
 
     @Unique
     private static boolean suitHasOxygen(LivingEntity player) {
-        return isWearingSealedSuit(player) && player.getItemBySlot(EquipmentSlot.CHEST).get(ModComponents.OXYGEN_STORAGE) != null && player.getItemBySlot(EquipmentSlot.CHEST).get(ModComponents.OXYGEN_STORAGE) > 0;
+        return (isWearingSealedSuit(player) || isWearingMembrane(player))
+                && player.getItemBySlot(EquipmentSlot.CHEST).get(ModComponents.OXYGEN_STORAGE) != null
+                && player.getItemBySlot(EquipmentSlot.CHEST).get(ModComponents.OXYGEN_STORAGE) > 0;
+    }
+
+    @Unique
+    private static void decreaseSuitOxygen(LivingEntity player, int currentSupply) {
+        int airLossPerTick = 1;
+        if (player.getItemBySlot(EquipmentSlot.CHEST).has(ModComponents.OXYGEN_STORAGE)) {
+            player.getItemBySlot(EquipmentSlot.CHEST).set(ModComponents.OXYGEN_STORAGE, currentSupply - airLossPerTick);
+        }
+    }
+
+    @Unique
+    private static void increaseSuitOxygen(LivingEntity player, int currentSupply) {
+        int airGainPerTick = 4;
+        int maxSuitOxygen = 24000;
+        if (player.getItemBySlot(EquipmentSlot.CHEST).has(ModComponents.OXYGEN_STORAGE)
+                && player.getItemBySlot(EquipmentSlot.CHEST).get(ModComponents.OXYGEN_STORAGE) < maxSuitOxygen) {
+            player.getItemBySlot(EquipmentSlot.CHEST).set(ModComponents.OXYGEN_STORAGE, currentSupply + airGainPerTick);
+        }
+    }
+
+    @Unique
+    private static boolean isProperlyInsulated(LivingEntity player) {
+        long count = Stream.of(isWearingMembrane(player),
+                player.getItemBySlot(EquipmentSlot.HEAD).getComponents().has(ModComponents.INSULATED),
+                player.getItemBySlot(EquipmentSlot.CHEST).getComponents().has(ModComponents.INSULATED),
+                player.getItemBySlot(EquipmentSlot.LEGS).getComponents().has(ModComponents.INSULATED),
+                player.getItemBySlot(EquipmentSlot.FEET).getComponents().has(ModComponents.INSULATED)).filter(Boolean::booleanValue).count();
+        return count >= (isWearingMembrane(player) ? 2: 4);
     }
 
     @Unique
@@ -89,7 +135,7 @@ public abstract class EntityFreezingMixin extends Entity {
     @Unique
     protected int decreaseAirSupplyFast(final int currentSupply) {
         LivingEntity instance = (LivingEntity) (Object) this;
-        int airLossPerTick;
+        int airLossPerTick = 20;
         AttributeInstance respiration = instance.getAttribute(Attributes.OXYGEN_BONUS);
         double oxygenBonus;
         if (respiration != null) {
@@ -98,9 +144,9 @@ public abstract class EntityFreezingMixin extends Entity {
             oxygenBonus = 0.0;
         }
         if (instance.getBlockStateOn().is(Blocks.SCULK)) {
-            airLossPerTick = 2;
-        }else {
-            airLossPerTick = 20;
+            airLossPerTick = airLossPerTick/10;
+        }else if (isWearingMembrane(instance) || isWearingSealedSuit(instance)){
+            airLossPerTick = airLossPerTick/10;
         }
         suffocationDamageThreshold = airLossPerTick * (-20);
         return oxygenBonus > 0.0 && random.nextDouble() >= 1.0 / (oxygenBonus + 1.0) ? currentSupply : currentSupply - airLossPerTick;

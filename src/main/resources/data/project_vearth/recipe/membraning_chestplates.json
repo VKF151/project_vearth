@@ -1,0 +1,6 @@
+{
+  "type": "project_vearth:membraning",
+  "template": "minecraft:netherite_upgrade_smithing_template",
+  "base": "#minecraft:chest_armor",
+  "addition": "minecraft:phantom_membrane"
+}

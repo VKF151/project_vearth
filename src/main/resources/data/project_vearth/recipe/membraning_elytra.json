@@ -1,0 +1,6 @@
+{
+  "type": "project_vearth:membraning",
+  "template": "minecraft:netherite_upgrade_smithing_template",
+  "base": "minecraft:elytra",
+  "addition": "minecraft:phantom_membrane"
+}
