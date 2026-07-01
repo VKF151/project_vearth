@@ -3,9 +3,34 @@
   "generator": {
     "type": "minecraft:noise",
     "biome_source": {
-      "type": "minecraft:fixed",
-      "biome": "project_vearth:moon"
+      "type": "minecraft:multi_noise",
+      "biomes": [
+        {
+          "biome": "project_vearth:moon",
+          "parameters": {
+            "temperature": 0,
+            "humidity": 0,
+            "continentalness": 0,
+            "erosion": 0,
+            "weirdness": 0,
+            "depth": 0,
+            "offset": 0
+          }
+        },
+        {
+          "biome": "project_vearth:infected_moon",
+          "parameters": {
+            "temperature": 0,
+            "humidity": 0,
+            "continentalness": 0,
+            "erosion": 0,
+            "weirdness": 0.05,
+            "depth": 1,
+            "offset": 0
+          }
+        }
+      ]
     },
-    "settings": "project_vearth:moon_noise"
+    "settings": "project_vearth:moon_noise_2"
   }
 }
