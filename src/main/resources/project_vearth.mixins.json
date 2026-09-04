@@ -6,7 +6,7 @@
     "ExampleMixin",
     "block.EyeblossomMixin",
     "gravity.EntityGravityMixin",
-    "LifeSupport.EntityFreezingMixin"
+    "LifeSupport.EntityLifeSupportMixin"
   ],
   "injectors": {
     "defaultRequire": 1

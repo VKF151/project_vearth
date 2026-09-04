@@ -26,7 +26,7 @@ import java.util.function.Function;
 
 public class ModItems {
     private static final String LAYER_PATH = "textures/entity/equipment/humanoid_under/";
-    private static final Identifier SPACE_SUIT_LAYER = Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID, LAYER_PATH + "space_suit.png");
+    private static final Identifier SPACE_SUIT_LAYER = Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID, LAYER_PATH + "space_suit_old.png");
 
     public static final Item MOD_ICON_ITEM = registerItem(ModItemIds.MOD_ICON,
             (new Item.Properties())
@@ -35,27 +35,22 @@ public class ModItems {
     public static final Item SPACE_SUIT_HELMET = registerItem(ModItemIds.SPACE_SUIT_HELMET,
             (new Item.Properties()
                     .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.HELMET)
-                    .component(ModComponents.SEALED, true)
             ));
 
     public static final Item SPACE_SUIT_CHESTPLATE = registerItem(ModItemIds.SPACE_SUIT_CHESTPLATE,
             (new Item.Properties()
                     .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.CHESTPLATE)
-                    .component(ModComponents.SEALED, true)
                     .component(ModComponents.OXYGEN_STORAGE, 0)
-                    .component(ModComponents.ARMOR_LAYER, SPACE_SUIT_LAYER)
             ));
 
     public static final Item SPACE_SUIT_LEGGINGS = registerItem(ModItemIds.SPACE_SUIT_LEGGINGS,
             (new Item.Properties()
                     .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.LEGGINGS)
-                    .component(ModComponents.SEALED, true)
             ));
 
     public static final Item SPACE_SUIT_BOOTS = registerItem(ModItemIds.SPACE_SUIT_BOOTS,
             (new Item.Properties()
                     .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.BOOTS)
-                    .component(ModComponents.SEALED, true)
             ));
 
     public static final Item REGOLITH =registerBlock(ModBlockItemIds.REGOLITH, ModBlocks.REGOLITH);

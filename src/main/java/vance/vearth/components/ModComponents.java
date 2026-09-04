@@ -8,6 +8,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.resources.Identifier;
 import vance.vearth.Project_vearth;
+import vance.vearth.world.item.equipment.spaceSuit.SpaceSuit;
 
 import java.util.function.UnaryOperator;
 
@@ -27,6 +28,9 @@ public class ModComponents {
 
     public static final DataComponentType<Identifier> ARMOR_LAYER =
             register("armor_layer", identifierBuilder -> identifierBuilder.persistent(Identifier.CODEC).networkSynchronized(Identifier.STREAM_CODEC).cacheEncoding());
+
+    public static final DataComponentType<SpaceSuit> SUIT =
+            register("space_suit", b -> b.persistent(SpaceSuit.CODEC).networkSynchronized(SpaceSuit.STREAM_CODEC).cacheEncoding());
 
     private static <T> DataComponentType<T> register(String name, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
         return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID, name),

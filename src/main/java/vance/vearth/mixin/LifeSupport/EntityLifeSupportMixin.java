@@ -14,7 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,12 +25,12 @@ import vance.vearth.world.dimension.ModDims;
 import java.util.stream.Stream;
 
 @Mixin(LivingEntity.class)
-public abstract class EntityFreezingMixin extends Entity {
+public abstract class EntityLifeSupportMixin extends Entity {
 
     @Unique
     protected final RandomSource random = RandomSource.create();
 
-    public EntityFreezingMixin(EntityType<?> type, Level level) {
+    public EntityLifeSupportMixin(EntityType<?> type, Level level) {
         super(type, level);
     }
 

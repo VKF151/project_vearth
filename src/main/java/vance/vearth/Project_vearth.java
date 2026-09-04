@@ -15,8 +15,11 @@ import vance.vearth.block.ModBlocks;
 import vance.vearth.components.ModComponents;
 import vance.vearth.gravity.GravityHandler;
 import vance.vearth.item.ModItems;
+import vance.vearth.resources.registry.ModRegistries;
 import vance.vearth.world.item.crafting.SmithingInsulationRecipe;
 import vance.vearth.world.item.crafting.SmithingMembraneRecipe;
+import vance.vearth.world.item.equipment.spaceSuit.SuitDesigns;
+import vance.vearth.world.item.equipment.spaceSuit.SuitMaterials;
 
 public class Project_vearth implements ModInitializer {
 	public static final String MOD_ID = "project_vearth";
@@ -31,6 +34,9 @@ public class Project_vearth implements ModInitializer {
 		PoiHelper.register(Identifier.fromNamespaceAndPath(MOD_ID, "vearth_portal"), 0, 1, ModBlocks.OPEN_ECHOFLOWER);
 		RecipeSynchronization.synchronizeRecipeSerializer(MEMBRANING_RECIPE_SERIALIZER);
 		RecipeSynchronization.synchronizeRecipeSerializer(INSULATING_RECIPE_SERIALIZER);
+		ModRegistries.initialize();
+		SuitDesigns.initialize();
+		SuitMaterials.initialize();
 	}
 	public static final RecipeSerializer<SmithingMembraneRecipe> MEMBRANING_RECIPE_SERIALIZER = Registry.register(
 			BuiltInRegistries.RECIPE_SERIALIZER,
