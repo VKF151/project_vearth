@@ -6,7 +6,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -15,8 +14,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import vance.vearth.Project_vearth;
 import vance.vearth.block.ModBlocks;
-import vance.vearth.components.ModComponents;
-import vance.vearth.item.equipment.ModArmorMaterials;
 import vance.vearth.resources.Identifier.ModBlockItemId;
 import vance.vearth.resources.Identifier.ModBlockItemIds;
 import vance.vearth.resources.Identifier.ModItemIds;
@@ -25,33 +22,10 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class ModItems {
-    private static final String LAYER_PATH = "textures/entity/equipment/humanoid_under/";
-    private static final Identifier SPACE_SUIT_LAYER = Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID, LAYER_PATH + "space_suit_old.png");
 
     public static final Item MOD_ICON_ITEM = registerItem(ModItemIds.MOD_ICON,
             (new Item.Properties())
     );
-
-    public static final Item SPACE_SUIT_HELMET = registerItem(ModItemIds.SPACE_SUIT_HELMET,
-            (new Item.Properties()
-                    .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.HELMET)
-            ));
-
-    public static final Item SPACE_SUIT_CHESTPLATE = registerItem(ModItemIds.SPACE_SUIT_CHESTPLATE,
-            (new Item.Properties()
-                    .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.CHESTPLATE)
-                    .component(ModComponents.OXYGEN_STORAGE, 0)
-            ));
-
-    public static final Item SPACE_SUIT_LEGGINGS = registerItem(ModItemIds.SPACE_SUIT_LEGGINGS,
-            (new Item.Properties()
-                    .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.LEGGINGS)
-            ));
-
-    public static final Item SPACE_SUIT_BOOTS = registerItem(ModItemIds.SPACE_SUIT_BOOTS,
-            (new Item.Properties()
-                    .humanoidArmor(ModArmorMaterials.SPACE_SUIT, ArmorType.BOOTS)
-            ));
 
     public static final Item REGOLITH =registerBlock(ModBlockItemIds.REGOLITH, ModBlocks.REGOLITH);
     public static final Item OPEN_ECHOFLOWER =registerBlock(ModBlockItemIds.OPEN_ECHOFLOWER, ModBlocks.OPEN_ECHOFLOWER);
@@ -98,10 +72,6 @@ public class ModItems {
 
         CreativeModeTabEvents.modifyOutputEvent(PROJECT_VEARTH_GROUP_KEY).register(fabricItemGroupEntries -> {
             fabricItemGroupEntries.accept(ModItems.MOD_ICON_ITEM);
-            fabricItemGroupEntries.accept(ModItems.SPACE_SUIT_HELMET);
-            fabricItemGroupEntries.accept(ModItems.SPACE_SUIT_CHESTPLATE);
-            fabricItemGroupEntries.accept(ModItems.SPACE_SUIT_LEGGINGS);
-            fabricItemGroupEntries.accept(ModItems.SPACE_SUIT_BOOTS);
             fabricItemGroupEntries.accept(ModItems.REGOLITH);
             fabricItemGroupEntries.accept(ModItems.OPEN_ECHOFLOWER);
             fabricItemGroupEntries.accept(ModItems.CLOSED_ECHOFLOWER);

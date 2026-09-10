@@ -43,7 +43,6 @@ public class SpaceSuitUnderArmorModel<S extends HumanoidRenderState> extends Hum
         head.addOrReplaceChild(PartNames.HAT, CubeListBuilder.create(), PartPose.ZERO);
 
         PartDefinition body = root.addOrReplaceChild(PartNames.BODY, CubeListBuilder.create().texOffs(16, 16).addBox(-4, 0, -2, 8, 12, 4, new CubeDeformation(0.55F)), PartPose.ZERO);
-        body.addOrReplaceChild("air_tank", CubeListBuilder.create().texOffs(16, 32).addBox(-4, -1, 2, 8, 10, 4, new CubeDeformation(0.5F)), PartPose.ZERO);
 
         root.addOrReplaceChild(PartNames.LEFT_ARM, CubeListBuilder.create().texOffs(32, 48).mirror().addBox(-1, -2, -2, 4, 12, 4, new CubeDeformation(0.25F)).mirror(false), PartPose.offset(5, 2, 0));
         root.addOrReplaceChild(PartNames.RIGHT_ARM, CubeListBuilder.create().texOffs(40, 16).addBox(-3, -2, -2, 4, 12, 4, new CubeDeformation(0.25F)), PartPose.offset(-5, 2, 0));

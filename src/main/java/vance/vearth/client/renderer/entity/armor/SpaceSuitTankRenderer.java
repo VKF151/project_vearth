@@ -1,0 +1,90 @@
+package vance.vearth.client.renderer.entity.armor;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.EquipmentClientInfo;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.EquipmentAsset;
+import org.jspecify.annotations.NonNull;
+import vance.vearth.Project_vearth;
+import vance.vearth.Project_vearthClient;
+import vance.vearth.client.renderer.entity.armor.model.SpaceSuitTankModel;
+import vance.vearth.components.ModComponents;
+import vance.vearth.world.item.equipment.spaceSuit.SpaceSuit;
+
+public record SpaceSuitTankRenderer(SpaceSuitTankModel<HumanoidRenderState> armorModel, TextureAtlas suitAtlas) implements ArmorRenderer {
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID, "textures/entity/equipment/humanoid/full_tank.png");
+
+    public static final Identifier SPACE_SUIT_TANK_SHEET = Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID,  "textures/atlas/space_suit_tanks.png");
+
+
+    public SpaceSuitTankRenderer(EntityModelSet entityModelSet, EquipmentSlot slot, final TextureAtlas suitAtlas) {
+        this(new SpaceSuitTankModel<>(entityModelSet.bakeLayer(SpaceSuitTankModel.MODEL_LAYERS.get(slot))), suitAtlas);
+    }
+
+    public void renderTank(
+            PoseStack poseStack,
+            SubmitNodeCollector submitNodeCollector,
+            ItemStack stack,
+            HumanoidRenderState humanoidRenderState,
+            int light,
+            HumanoidModel<HumanoidRenderState> contextModel,
+            final EquipmentClientInfo.LayerType layerType,
+            final ResourceKey<EquipmentAsset> equipmentAssetId,
+            boolean isWearingCape) {
+        SpaceSuit suit = stack.get(ModComponents.SUIT);
+        if (suit != null) {
+            TextureAtlasSprite sprite = getAtlasSprite(suit, layerType, equipmentAssetId);
+            Identifier spriteLocation;
+            if (isWearingCape && humanoidRenderState instanceof AvatarRenderState playerState) {
+                PlayerSkin skin = playerState.skin;
+                assert skin.cape() != null;
+                spriteLocation = skin.cape().texturePath();
+            } else {
+                spriteLocation = sprite.atlasLocation();
+            }
+            OrderedSubmitNodeCollector queue = submitNodeCollector.order(1);
+            ArmorRenderer.submitTransformCopyingModel(contextModel, humanoidRenderState, armorModel, humanoidRenderState, true, queue, poseStack, RenderTypes.armorTranslucent(spriteLocation), light, OverlayTexture.NO_OVERLAY, -1, isWearingCape ? null : sprite, humanoidRenderState.outlineColor, null);
+            if (stack.hasFoil()) {
+                ArmorRenderer.submitTransformCopyingModel(contextModel, humanoidRenderState, armorModel, humanoidRenderState, true, queue, poseStack, RenderTypes.armorEntityGlint(), light, OverlayTexture.NO_OVERLAY, -1, sprite, humanoidRenderState.outlineColor, null);
+            }
+        }
+
+
+    }
+    //Old
+    @Override
+    public void render(@NonNull PoseStack poseStack, SubmitNodeCollector submitNodeCollector, ItemStack stack, @NonNull HumanoidRenderState humanoidRenderState, @NonNull EquipmentSlot slot, int light, @NonNull HumanoidModel<HumanoidRenderState> contextModel) {
+        OrderedSubmitNodeCollector queue = submitNodeCollector.order(1);
+        ArmorRenderer.submitTransformCopyingModel(contextModel, humanoidRenderState, armorModel, humanoidRenderState, true, queue, poseStack, RenderTypes.armorTranslucent(TEXTURE), light, OverlayTexture.NO_OVERLAY, humanoidRenderState.outlineColor, null);
+        if (stack.hasFoil()) {
+            ArmorRenderer.submitTransformCopyingModel(contextModel, humanoidRenderState, armorModel, humanoidRenderState, true, queue, poseStack, RenderTypes.armorEntityGlint(), light, OverlayTexture.NO_OVERLAY, humanoidRenderState.outlineColor, null);
+        }
+    }
+
+    public static String suitAssetPrefix(String id) {
+        return "entity/equipment/" + id;
+    }
+
+    public static TextureAtlasSprite getAtlasSprite(SpaceSuit suit, EquipmentClientInfo.LayerType layerType, ResourceKey<EquipmentAsset> equipmentAssetId) {
+        TextureAtlas suitAtlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(Project_vearthClient.TANK_ATLAS_KEY);
+        Identifier spritePath = suit.layerAssetId(suitAssetPrefix(layerType.getSerializedName()), equipmentAssetId, true);
+        return suitAtlas.getSprite(spritePath);
+
+    }
+}

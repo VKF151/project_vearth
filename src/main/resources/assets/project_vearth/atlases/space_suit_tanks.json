@@ -1,0 +1,29 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:paletted_permutations",
+      "palette_key": "project_vearth:suits/color_palettes/trim_palette",
+      "permutations": {
+        "amethyst": "project_vearth:suits/color_palettes/amethyst",
+        "copper": "project_vearth:suits/color_palettes/copper",
+        "copper_darker": "project_vearth:suits/color_palettes/copper_darker",
+        "diamond": "project_vearth:suits/color_palettes/diamond",
+        "diamond_darker": "project_vearth:suits/color_palettes/diamond_darker",
+        "emerald": "project_vearth:suits/color_palettes/emerald",
+        "gold": "project_vearth:suits/color_palettes/gold",
+        "gold_darker": "project_vearth:suits/color_palettes/gold_darker",
+        "iron": "project_vearth:suits/color_palettes/iron",
+        "iron_darker": "project_vearth:suits/color_palettes/iron_darker",
+        "lapis": "project_vearth:suits/color_palettes/lapis",
+        "netherite": "project_vearth:suits/color_palettes/netherite",
+        "netherite_darker": "project_vearth:suits/color_palettes/netherite_darker",
+        "quartz": "project_vearth:suits/color_palettes/quartz",
+        "redstone": "project_vearth:suits/color_palettes/redstone",
+        "resin": "project_vearth:suits/color_palettes/resin"
+      },
+      "textures": [
+        "project_vearth:entity/equipment/humanoid/full_tank"
+      ]
+    }
+  ]
+}

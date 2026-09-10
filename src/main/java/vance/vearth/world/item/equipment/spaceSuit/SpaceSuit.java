@@ -34,9 +34,9 @@ public record SpaceSuit(Holder<SuitMaterial> material, Holder<SuitDesign> design
         consumer.accept(CommonComponents.space().append((this.material.value()).description()));
     }
 
-    public Identifier layerAssetId(final String layerAssetPrefix, final ResourceKey<EquipmentAsset> equipmentAsset) {
+    public Identifier layerAssetId(final String layerAssetPrefix, final ResourceKey<EquipmentAsset> equipmentAsset, boolean isTank) {
         MaterialAssetGroup.AssetInfo materialAsset = (this.material().value()).assets().assetId(equipmentAsset);
-        return (this.design().value()).assetId().withPath((designPath) -> layerAssetPrefix + "/" + designPath + "_" + materialAsset.suffix());
+        return isTank ? (this.design().value()).assetId().withPath((designPath) -> layerAssetPrefix + "/" + designPath + "_tank_" + materialAsset.suffix()) : (this.design().value()).assetId().withPath((designPath) -> layerAssetPrefix + "/" + designPath + "_" + materialAsset.suffix());
     }
 
     static {

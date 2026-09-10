@@ -26,7 +26,6 @@ import vance.vearth.components.ModComponents;
 import vance.vearth.world.item.equipment.spaceSuit.SpaceSuit;
 
 public record SpaceSuitUnderArmorRenderer(SpaceSuitUnderArmorModel<HumanoidRenderState> armorModel, TextureAtlas suitAtlas) implements ArmorRenderer {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID, "textures/entity/equipment/humanoid/space_suit_full.png");
 
     public static final Identifier SPACE_SUIT_SHEET = Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID,  "textures/atlas/space_suits.png");
 
@@ -55,15 +54,6 @@ public record SpaceSuitUnderArmorRenderer(SpaceSuitUnderArmorModel<HumanoidRende
 
 
     }
-    //Old
-    @Override
-    public void render(@NonNull PoseStack poseStack, SubmitNodeCollector submitNodeCollector, ItemStack stack, @NonNull HumanoidRenderState humanoidRenderState, @NonNull EquipmentSlot slot, int light, @NonNull HumanoidModel<HumanoidRenderState> contextModel) {
-        OrderedSubmitNodeCollector queue = submitNodeCollector.order(1);
-        ArmorRenderer.submitTransformCopyingModel(contextModel, humanoidRenderState, armorModel, humanoidRenderState, true, queue, poseStack, RenderTypes.armorTranslucent(TEXTURE), light, OverlayTexture.NO_OVERLAY, humanoidRenderState.outlineColor, null);
-        if (stack.hasFoil()) {
-            ArmorRenderer.submitTransformCopyingModel(contextModel, humanoidRenderState, armorModel, humanoidRenderState, true, queue, poseStack, RenderTypes.armorEntityGlint(), light, OverlayTexture.NO_OVERLAY, humanoidRenderState.outlineColor, null);
-        }
-    }
 
     public static String suitAssetPrefix(String id) {
         return "entity/equipment/" + id;
@@ -71,9 +61,13 @@ public record SpaceSuitUnderArmorRenderer(SpaceSuitUnderArmorModel<HumanoidRende
 
     public static TextureAtlasSprite getAtlasSprite(SpaceSuit suit, EquipmentClientInfo.LayerType layerType, ResourceKey<EquipmentAsset> equipmentAssetId) {
         TextureAtlas suitAtlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(Project_vearthClient.SUIT_ATLAS_KEY);
-        Identifier spritePath = suit.layerAssetId(suitAssetPrefix(layerType.getSerializedName()), equipmentAssetId);
+        Identifier spritePath = suit.layerAssetId(suitAssetPrefix(layerType.getSerializedName()), equipmentAssetId, false);
         return suitAtlas.getSprite(spritePath);
 
     }
 
+    @Override
+    public void render(@NonNull PoseStack poseStack, @NonNull SubmitNodeCollector submitNodeCollector, @NonNull ItemStack stack, @NonNull HumanoidRenderState humanoidRenderState, @NonNull EquipmentSlot slot, int light, @NonNull HumanoidModel<HumanoidRenderState> contextModel) {
+
+    }
 }
