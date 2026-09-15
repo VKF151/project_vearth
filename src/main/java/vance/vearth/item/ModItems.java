@@ -27,9 +27,11 @@ public class ModItems {
             (new Item.Properties())
     );
 
-    public static final Item REGOLITH =registerBlock(ModBlockItemIds.REGOLITH, ModBlocks.REGOLITH);
-    public static final Item OPEN_ECHOFLOWER =registerBlock(ModBlockItemIds.OPEN_ECHOFLOWER, ModBlocks.OPEN_ECHOFLOWER);
-    public static final Item CLOSED_ECHOFLOWER =registerBlock(ModBlockItemIds.CLOSED_ECHOFLOWER, ModBlocks.CLOSED_ECHOFLOWER);
+    public static final Item REGOLITH = registerBlock(ModBlockItemIds.REGOLITH, ModBlocks.REGOLITH);
+    public static final Item OPEN_ECHOFLOWER = registerBlock(ModBlockItemIds.OPEN_ECHOFLOWER, ModBlocks.OPEN_ECHOFLOWER);
+    public static final Item CLOSED_ECHOFLOWER = registerBlock(ModBlockItemIds.CLOSED_ECHOFLOWER, ModBlocks.CLOSED_ECHOFLOWER);
+    public static final Item ENDOSELENE_MYCELIUM = registerBlock(ModBlockItemIds.ENDOSELENE_MYCELIUM, ModBlocks.ENDOSELENE_MYCELIUM);
+    public static final Item ENDOSELENE_HYPHAE = registerBlock(ModBlockItemIds.ENDOSELENE_HYPHAE, ModBlocks.ENDOSELENE_HYPHAE);
 
     private static Item registerBlock(final ModBlockItemId id, final Block block) {
         return registerBlock(id, block, BlockItem::new);
@@ -75,6 +77,8 @@ public class ModItems {
             fabricItemGroupEntries.accept(ModItems.REGOLITH);
             fabricItemGroupEntries.accept(ModItems.OPEN_ECHOFLOWER);
             fabricItemGroupEntries.accept(ModItems.CLOSED_ECHOFLOWER);
+            fabricItemGroupEntries.accept(ModItems.ENDOSELENE_MYCELIUM);
+            fabricItemGroupEntries.accept(ModItems.ENDOSELENE_HYPHAE);
         });
     }
 

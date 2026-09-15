@@ -44,8 +44,8 @@ public class SpaceSuitUnderArmorModel<S extends HumanoidRenderState> extends Hum
 
         PartDefinition body = root.addOrReplaceChild(PartNames.BODY, CubeListBuilder.create().texOffs(16, 16).addBox(-4, 0, -2, 8, 12, 4, new CubeDeformation(0.55F)), PartPose.ZERO);
 
-        root.addOrReplaceChild(PartNames.LEFT_ARM, CubeListBuilder.create().texOffs(32, 48).mirror().addBox(-1, -2, -2, 4, 12, 4, new CubeDeformation(0.25F)).mirror(false), PartPose.offset(5, 2, 0));
-        root.addOrReplaceChild(PartNames.RIGHT_ARM, CubeListBuilder.create().texOffs(40, 16).addBox(-3, -2, -2, 4, 12, 4, new CubeDeformation(0.25F)), PartPose.offset(-5, 2, 0));
+        root.addOrReplaceChild(PartNames.LEFT_ARM, CubeListBuilder.create().texOffs(32, 48).mirror().addBox(-1, -2, -2, 4, 12, 4, new CubeDeformation(0.255F)).mirror(false), PartPose.offset(5, 2, 0));
+        root.addOrReplaceChild(PartNames.RIGHT_ARM, CubeListBuilder.create().texOffs(40, 16).addBox(-3, -2, -2, 4, 12, 4, new CubeDeformation(0.255F)), PartPose.offset(-5, 2, 0));
 
         PartDefinition leftLeg = root.addOrReplaceChild(PartNames.LEFT_LEG, CubeListBuilder.create(), PartPose.offset(1.9F, 12, 0));
         leftLeg.addOrReplaceChild("left_leg_real", CubeListBuilder.create().texOffs(16, 48).mirror().addBox(-2.1F, 0, -2, 4, 12, 4, new CubeDeformation(0.35F)).mirror(false), PartPose.ZERO);

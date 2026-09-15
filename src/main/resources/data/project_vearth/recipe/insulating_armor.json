@@ -1,6 +1,0 @@
-{
-  "type": "project_vearth:insulating",
-  "template": "minecraft:netherite_upgrade_smithing_template",
-  "base": "#minecraft:trimmable_armor",
-  "addition": "#minecraft:wool"
-}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:sequence",
+  "sequence": [
+    {
+      "type": "minecraft:condition",
+      "if_true": "minecraft:not_underwater",
+      "then_run": {
+        "type": "minecraft:block",
+        "result_state": "project_vearth:regolith"
+      }
+    },
+    {
+      "type": "minecraft:block",
+      "result_state": "project_vearth:regolith"
+    }
+  ]
+}

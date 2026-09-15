@@ -10,6 +10,8 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import vance.vearth.block.custom.EchoFlowerBlock;
+import vance.vearth.block.custom.EndoseleneHyphaeBlock;
+import vance.vearth.block.custom.EndoseleneMyceliumBlock;
 import vance.vearth.block.custom.VearthPortalBlock;
 import vance.vearth.resources.Identifier.ModBlockItemId;
 import vance.vearth.resources.Identifier.ModBlockItemIds;
@@ -38,7 +40,7 @@ public class ModBlocks {
     public static final Block VEARTH_PORTAL = register(
             ModBlockItemIds.VEARTH_PORTAL,
             VearthPortalBlock::new,
-            BlockBehaviour.Properties.of().noCollision().randomTicks().strength(-1.0F).sound(SoundType.GLASS).lightLevel(statex -> 11).pushReaction(PushReaction.BLOCK)
+            BlockBehaviour.Properties.of().noCollision().randomTicks().strength(-1.0F).sound(SoundType.GLASS).lightLevel(statex -> 11).pushReaction(PushReaction.IMMOVEABLE)
     );
 
     public static final Block OPEN_ECHOFLOWER = register(
@@ -50,8 +52,8 @@ public class ModBlocks {
                     .instabreak()
                     .sound(SoundType.GRASS)
                     .offsetType(BlockBehaviour.OffsetType.XZ)
-                    .pushReaction(PushReaction.DESTROY)
                     .randomTicks()
+                    .pushReaction(PushReaction.POPPED)
     );
     public static final Block CLOSED_ECHOFLOWER = register(
             ModBlockItemIds.CLOSED_ECHOFLOWER,
@@ -62,14 +64,30 @@ public class ModBlocks {
                     .instabreak()
                     .sound(SoundType.GRASS)
                     .offsetType(BlockBehaviour.OffsetType.XZ)
-                    .pushReaction(PushReaction.DESTROY)
                     .randomTicks()
+                    .pushReaction(PushReaction.POPPED)
     );
     public static final Block POTTED_OPEN_ECHOFLOWER = register(
             ModBlockItemIds.POTTED_OPEN_ECHOFLOWER, p -> new FlowerPotBlock(OPEN_EYEBLOSSOM, p), flowerPotProperties().randomTicks()
     );
     public static final Block POTTED_CLOSED_ECHOFLOWER = register(
             ModBlockItemIds.POTTED_CLOSED_ECHOFLOWER, p -> new FlowerPotBlock(CLOSED_EYEBLOSSOM, p), flowerPotProperties().randomTicks()
+    );
+
+    public static final Block ENDOSELENE_MYCELIUM = register(
+            ModBlockItemIds.ENDOSELENE_MYCELIUM, EndoseleneMyceliumBlock::new, BlockBehaviour.Properties.of().strength(0.35F, 1.0F).sound(SoundType.SCULK)
+    );
+
+    public static final Block ENDOSELENE_HYPHAE = register(
+            ModBlockItemIds.ENDOSELENE_HYPHAE,
+            EndoseleneHyphaeBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .forceSolidOn()
+                    .noCollision()
+                    .strength(0.2F)
+                    .sound(SoundType.SCULK_VEIN)
+                    .pushReaction(PushReaction.POPPED)
     );
 
     public static void initialize() {}

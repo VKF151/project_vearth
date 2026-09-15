@@ -1,9 +1,6 @@
 package vance.vearth.block.custom;
 
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -17,7 +14,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.BlockUtil;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.effect.MobEffect;
@@ -29,8 +25,6 @@ import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.Relative;
 import net.minecraft.world.entity.animal.bee.Bee;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -61,15 +55,7 @@ import static vance.vearth.block.custom.VearthPortalBlock.AXIS;
 
 public class EchoFlowerBlock extends FlowerBlock implements Portal {
     private static final Logger LOGGER = LogUtils.getLogger();
-    public static final MapCodec<EchoFlowerBlock> CODEC = RecordCodecBuilder.mapCodec(
-            i -> i.group(Codec.BOOL.fieldOf("open").forGetter(e -> e.type.open), propertiesCodec()).apply(i, EchoFlowerBlock::new)
-    );
     private final EchoFlowerBlock.Type type;
-
-    @Override
-    public @NonNull MapCodec<? extends EchoFlowerBlock> codec() {
-        return CODEC;
-    }
 
     public EchoFlowerBlock(final EchoFlowerBlock.Type type, final BlockBehaviour.Properties properties) {
         super(type.effect, type.effectDuration, properties);
@@ -85,12 +71,21 @@ public class EchoFlowerBlock extends FlowerBlock implements Portal {
     protected boolean mayPlaceOn(BlockState state, @NonNull BlockGetter level, @NonNull BlockPos pos) {
         return state.is(Blocks.SCULK)|| state.is(ModBlocks.REGOLITH) || state.is(BlockTags.SUPPORTS_VEGETATION) || state.is(Blocks.SMOOTH_BASALT);
     }
-
+    /*
     @Override
     protected @NonNull InteractionResult useItemOn(@NonNull ItemStack itemStack, @NonNull BlockState state, @NonNull Level level, @NonNull BlockPos pos, Player player, @NonNull InteractionHand hand, @NonNull BlockHitResult hitResult) {
         ItemStack handStack = player.getItemInHand(hand);
         boolean isValid = !handStack.isEmpty() && handStack.getItem().equals(Items.ENDER_PEARL);
         if (isValid && !player.isCrouching() && player.canUsePortal(false) && this.type.open){
+            player.setAsInsidePortal(this, pos);
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.PASS;
+    }
+    */
+    @Override
+    protected @NonNull InteractionResult useWithoutItem(@NonNull BlockState state, @NonNull Level level, @NonNull BlockPos pos, Player player, @NonNull BlockHitResult hitResult) {
+        if (!player.isCrouching() && player.canUsePortal(false) && this.type.open){
             player.setAsInsidePortal(this, pos);
             return InteractionResult.SUCCESS;
         }
@@ -166,17 +161,17 @@ public class EchoFlowerBlock extends FlowerBlock implements Portal {
 
     @Override
     public @Nullable TeleportTransition getPortalDestination(final ServerLevel currentLevel, final @NonNull Entity entity, final @NonNull BlockPos portalEntryPos) {
-        ResourceKey<Level> newDimension = currentLevel.dimension() == ModDims.MOON_KEY ? Level.OVERWORLD : ModDims.MOON_KEY;
+        ResourceKey<Level> newDimension = currentLevel.dimension() == ModDims.VEARTH_KEY ? Level.OVERWORLD : ModDims.VEARTH_KEY;
         ServerLevel newLevel = currentLevel.getServer().getLevel(newDimension);
         if (newLevel == null) {
             return null;
         }
 
-        boolean toMoon = newLevel.dimension() == ModDims.MOON_KEY;
+        boolean toVearth = newLevel.dimension() == ModDims.VEARTH_KEY;
         WorldBorder newWorldBorder = newLevel.getWorldBorder();
         double teleportationScale = DimensionType.getTeleportationScale(currentLevel.dimensionType(), newLevel.dimensionType());
         BlockPos approximateExitPos = newWorldBorder.clampToBounds(entity.getX() * teleportationScale, entity.getY(), entity.getZ() * teleportationScale);
-        return this.getExitPortal(newLevel, entity, portalEntryPos, approximateExitPos, toMoon, newWorldBorder);
+        return this.getExitPortal(newLevel, entity, portalEntryPos, approximateExitPos, toVearth, newWorldBorder);
     }
 
     private @Nullable TeleportTransition getExitPortal(
@@ -184,11 +179,11 @@ public class EchoFlowerBlock extends FlowerBlock implements Portal {
             final Entity entity,
             final BlockPos portalEntryPos,
             final BlockPos approximateExitPos,
-            final boolean toMoon,
+            final boolean toVearth,
             final WorldBorder worldBorder
     ) {
         VearthPortalForcer vearthPortalForcer = new VearthPortalForcer(newLevel);
-        Optional<BlockPos> exitPortalPos = vearthPortalForcer.findClosestPortalPosition(approximateExitPos, toMoon, worldBorder);
+        Optional<BlockPos> exitPortalPos = vearthPortalForcer.findClosestPortalPosition(approximateExitPos, toVearth, worldBorder);
         BlockUtil.FoundRectangle exitPortal;
         TeleportTransition.PostTeleportTransition post;
         if (exitPortalPos.isPresent()) {

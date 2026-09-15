@@ -36,7 +36,7 @@ public class EntityGravityMixin {
 
         double original = cir.getReturnValue();
 
-        boolean onMoon = self.level().dimension().equals(ModDims.MOON_KEY);
+        boolean onMoon = self.level().dimension().equals(ModDims.VEARTH_KEY);
         boolean inOrbit = self.level().dimension().equals(ModDims.ORBIT_KEY);
 
         if (inOrbit) {

@@ -8,5 +8,11 @@
   "item.project_vearth.space_suit_leggings": "Space Suit Leggings",
   "item.project_vearth.space_suit_boots": "Space Suit Boots",
   "block.project_vearth.open_echoflower": "Open Echoflower",
-  "block.project_vearth.closed_echoflower": "Closed Echoflower"
+  "block.project_vearth.closed_echoflower": "Closed Echoflower",
+  "item.project_vearth.endoselene_mycelium": "Endoselene Mycelium",
+  "block.project_vearth.endoselene_mycelium": "Endoselene Mycelium",
+  "item.project_vearth.endoselene_hyphae": "Endoselene Hyphae",
+  "block.project_vearth.endoselene_hyphae": "Endoselene Hyphae",
+  "effect.project_vearth.breath": "Instant Breath",
+  "item.minecraft.potion.effect.breath": "Potion of Instant Breath"
 }

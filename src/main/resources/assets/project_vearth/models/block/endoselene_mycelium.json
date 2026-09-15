@@ -1,0 +1,7 @@
+{
+  "parent": "project_vearth:block/cube_all_emissive",
+  "textures": {
+    "all": "project_vearth:block/endoselene_mycelium",
+    "emissive": "project_vearth:block/endoselene_mycelium_emissive"
+  }
+}

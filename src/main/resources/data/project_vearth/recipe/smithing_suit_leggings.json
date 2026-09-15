@@ -1,0 +1,9 @@
+{
+  "type": "project_vearth:smithing_suit",
+  "addition": "#minecraft:trim_materials",
+  "base": "#minecraft:leg_armor",
+  "design": "project_vearth:full",
+  "template": "project_vearth:open_echoflower",
+  "has_respirant_storage": false,
+  "max_respirant_storage": 24000
+}

@@ -25,7 +25,7 @@ public class GravityHandler {
         }
     }
     private static void onWorldTick(ServerLevel world) {
-        final boolean onMoon  = world.dimension().equals(ModDims.MOON_KEY);
+        final boolean onMoon  = world.dimension().equals(ModDims.VEARTH_KEY);
         final boolean inOrbit = world.dimension().equals(ModDims.ORBIT_KEY);
 
         final double gravityTarget = inOrbit ? GravityModifiers.ORBIT_GRAV : (onMoon ? GravityModifiers.MOON_GRAV : GravityModifiers.EARTH_GRAV);
@@ -58,7 +58,7 @@ public class GravityHandler {
                 player.getAttribute(Attributes.GRAVITY);
         if (gravity == null) return;
 
-        boolean onMoon = player.level().dimension().equals(ModDims.MOON_KEY);
+        boolean onMoon = player.level().dimension().equals(ModDims.VEARTH_KEY);
         boolean inOrbit = player.level().dimension().equals(ModDims.ORBIT_KEY);
 
         double planet_grav = GravityModifiers.EARTH_GRAV;

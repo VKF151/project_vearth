@@ -1,0 +1,36 @@
+{
+  "type": "project_vearth:vearth_dim_type",
+  "generator": {
+    "type": "minecraft:noise",
+    "biome_source": {
+      "type": "minecraft:multi_noise",
+      "biomes": [
+        {
+          "biome": "project_vearth:vearth_surface",
+          "parameters": {
+            "temperature": 0,
+            "humidity": 0,
+            "continentalness": 0,
+            "erosion": 0,
+            "weirdness": 0,
+            "depth": 0,
+            "offset": 0
+          }
+        },
+        {
+          "biome": "project_vearth:vearth_reaches",
+          "parameters": {
+            "temperature": 0,
+            "humidity": 0,
+            "continentalness": 0,
+            "erosion": 0,
+            "weirdness": 0,
+            "depth": 1,
+            "offset": 0
+          }
+        }
+      ]
+    },
+    "settings": "project_vearth:vearth_noise"
+  }
+}

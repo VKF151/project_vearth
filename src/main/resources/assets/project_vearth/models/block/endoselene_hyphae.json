@@ -1,0 +1,16 @@
+{
+    "ambientocclusion": false,
+    "textures": {
+        "particle": "project_vearth:block/endoselene_hyphae",
+        "endoselene_hyphae": "project_vearth:block/endoselene_hyphae"
+    },
+    "elements": [
+        {   "from": [ 0, 0, 0.1 ],
+            "to": [ 16, 16, 0.1 ],
+            "faces": {
+                "north": { "uv": [ 16, 0, 0, 16 ], "texture": "#endoselene_hyphae" },
+                "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#endoselene_hyphae" }
+            }
+        }
+    ]
+}

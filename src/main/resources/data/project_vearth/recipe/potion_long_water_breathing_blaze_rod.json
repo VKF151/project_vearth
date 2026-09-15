@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:brewing",
+  "input": {
+    "item": "minecraft:potion",
+    "potion_contents": {
+      "potions": "minecraft:long_water_breathing"
+    }
+  },
+  "output": {
+    "components": {
+      "project_vearth:respirant_storage":{
+        "respirant_amount": 12000,
+        "max_respirant_amount": 24000
+      },
+      "minecraft:potion_contents": {
+        "potion": "project_vearth:breath"
+      }
+    },
+    "id": "minecraft:potion"
+  },
+  "reagent": {
+    "item": "minecraft:blaze_rod"
+  }
+}

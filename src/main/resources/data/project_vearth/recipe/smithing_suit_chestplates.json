@@ -1,0 +1,9 @@
+{
+  "type": "project_vearth:smithing_suit",
+  "addition": "#minecraft:trim_materials",
+  "base": "#minecraft:chest_armor",
+  "design": "project_vearth:full",
+  "template": "project_vearth:open_echoflower",
+  "has_respirant_storage": true,
+  "max_respirant_storage": 24000
+}

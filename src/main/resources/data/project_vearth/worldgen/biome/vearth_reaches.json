@@ -1,0 +1,55 @@
+{
+  "attributes": {
+    "minecraft:audio/background_music": {
+      "default": {
+        "max_delay": 24000,
+        "min_delay": 12000,
+        "sound": "minecraft:music.overworld.deep_dark"
+      }
+    }
+  },
+  "carvers": [
+    "minecraft:cave",
+    "minecraft:cave_extra_underground"
+  ],
+  "downfall": 0.4,
+  "effects": {
+    "water_color": "#3938c9"
+  },
+  "features": [
+    [],
+    [],
+    [
+    ],
+    [
+    ],
+    [],
+    [],
+    [
+    ],
+    [
+      "project_vearth:endoselene_patch"
+    ],
+    [
+    ],
+    [
+      "project_vearth:selene_shroom"
+    ],
+    [
+    ]
+  ],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.8,
+  "temperature_modifier": "frozen"
+}

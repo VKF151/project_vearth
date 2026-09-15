@@ -1,7 +1,6 @@
 package vance.vearth.block.custom;
 
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -49,14 +48,8 @@ import java.util.Optional;
 
 public class VearthPortalBlock extends Block implements Portal {
     private static final Logger LOGGER = LogUtils.getLogger();
-    public static final MapCodec<VearthPortalBlock> CODEC = simpleCodec(VearthPortalBlock::new);
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
     private static final Map<Direction.Axis, VoxelShape> SHAPES = Shapes.rotateHorizontalAxis(Block.column(4.0, 16.0, 0.0, 16.0));
-
-    @Override
-    public @NonNull MapCodec<VearthPortalBlock> codec() {
-        return CODEC;
-    }
 
     public VearthPortalBlock(Properties properties) {
         super(properties);
@@ -114,13 +107,13 @@ public class VearthPortalBlock extends Block implements Portal {
 
     @Override
     public @Nullable TeleportTransition getPortalDestination(final ServerLevel currentLevel, final @NonNull Entity entity, final @NonNull BlockPos portalEntryPos) {
-        ResourceKey<Level> newDimension = currentLevel.dimension() == ModDims.MOON_KEY ? Level.OVERWORLD : ModDims.MOON_KEY;
+        ResourceKey<Level> newDimension = currentLevel.dimension() == ModDims.VEARTH_KEY ? Level.OVERWORLD : ModDims.VEARTH_KEY;
         ServerLevel newLevel = currentLevel.getServer().getLevel(newDimension);
         if (newLevel == null) {
             return null;
         }
 
-        boolean toMoon = newLevel.dimension() == ModDims.MOON_KEY;
+        boolean toMoon = newLevel.dimension() == ModDims.VEARTH_KEY;
         WorldBorder newWorldBorder = newLevel.getWorldBorder();
         double teleportationScale = DimensionType.getTeleportationScale(currentLevel.dimensionType(), newLevel.dimensionType());
         BlockPos approximateExitPos = newWorldBorder.clampToBounds(entity.getX() * teleportationScale, entity.getY(), entity.getZ() * teleportationScale);

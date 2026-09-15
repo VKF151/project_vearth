@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:sequence",
+  "sequence": [
+    "project_vearth:bedrock_floor",
+    {
+      "type": "minecraft:condition",
+      "if_true": {
+        "type": "minecraft:above_preliminary_surface"
+      },
+      "then_run": "project_vearth:vearth/surface"
+    }
+  ]
+}
