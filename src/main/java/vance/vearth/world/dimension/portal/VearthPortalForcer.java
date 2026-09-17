@@ -26,6 +26,7 @@ import java.util.Optional;
 public class VearthPortalForcer {
     private final ServerLevel level;
     public static final ResourceKey<PoiType> VEARTH_PORTAL = ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, Identifier.fromNamespaceAndPath(Project_vearth.MOD_ID, "vearth_portal"));
+    private final int MAX_PORTAL_Y = -30;
 
     public VearthPortalForcer(final ServerLevel level) {
         this.level = level;
@@ -33,7 +34,7 @@ public class VearthPortalForcer {
 
     public Optional<BlockPos> findClosestPortalPosition(final BlockPos approximateExitPos, final boolean toMoon, final WorldBorder worldBorder) {
         PoiManager poiManager = this.level.getPoiManager();
-        int radius = toMoon ? 16 : 128;
+        int radius = toMoon ? 128 : 256;
         poiManager.ensureLoadedAndValid(this.level, approximateExitPos, radius);
         return poiManager.getInSquare(type -> type.is(VEARTH_PORTAL), approximateExitPos, radius, PoiManager.Occupancy.ANY)
                 .map(PoiRecord::getPos)
@@ -49,24 +50,24 @@ public class VearthPortalForcer {
         double closestPartialDistanceSqr = -1.0;
         BlockPos closestPartialPosition = null;
         WorldBorder worldBorder = this.level.getWorldBorder();
-        int maxPlaceableY = Math.min(this.level.getMaxY(), this.level.getMinY() + this.level.getLogicalHeight() - 1);
+        int maxPlaceableY = Math.min(MAX_PORTAL_Y, this.level.getMinY() + this.level.getLogicalHeight() - 1);
         BlockPos.MutableBlockPos mutable = origin.mutable();
 
-        for (BlockPos.MutableBlockPos columnPos : BlockPos.spiralAround(origin, 16, Direction.EAST, Direction.SOUTH)) {
+        for (BlockPos.MutableBlockPos columnPos : BlockPos.spiralAround(origin, 64, Direction.EAST, Direction.SOUTH)) {
             int height = Math.min(maxPlaceableY, this.level.getHeight(Heightmap.Types.MOTION_BLOCKING, columnPos.getX(), columnPos.getZ()));
             if (worldBorder.isWithinBounds(columnPos) && worldBorder.isWithinBounds(columnPos.move(direction, 1))) {
                 columnPos.move(direction.getOpposite(), 1);
 
-                for (int y = (height - (height - 1)); y <= this.level.getMaxY(); y++) {
+                for (int y = (height + (height - 1)); y <= MAX_PORTAL_Y; y++) {
                     columnPos.setY(y);
                     if (this.canPortalReplaceBlock(columnPos)) {
                         int firstEmptyY = y;
 
-                        while (y < this.level.getMaxY() && this.canPortalReplaceBlock(columnPos.move(Direction.DOWN))) {
+                        while (y < MAX_PORTAL_Y && this.canPortalReplaceBlock(columnPos.move(Direction.DOWN))) {
                             y++;
                         }
 
-                        if (y + 4 <= maxPlaceableY) {
+                        if (y + 2 <= maxPlaceableY) {
                             int deltaY = firstEmptyY - y;
                             if (deltaY <= 0 || deltaY >= 3) {
                                 columnPos.setY(y);
@@ -97,7 +98,7 @@ public class VearthPortalForcer {
         }
 
         if (closestFullDistanceSqr == -1.0) {
-            int minStartY = Math.max(this.level.getMinY() - -1, 70);
+            int minStartY = Math.max(this.level.getMinY() - -1, -50);
             int maxStartY = maxPlaceableY - 9;
             if (maxStartY < minStartY) {
                 return Optional.empty();
@@ -111,9 +112,9 @@ public class VearthPortalForcer {
             Direction clockWise = direction.getClockWise();
 
             for (int box = -1; box < 2; box++) {
-                for (int width = 0; width < 2; width++) {
+                for (int width = 0; width < 3; width++) {
                     for (int height = -1; height < 3; height++) {
-                        BlockState blockState = height < 0 ? Blocks.OBSIDIAN.defaultBlockState() : Blocks.AIR.defaultBlockState();
+                        BlockState blockState = height < 0 ? Blocks.SMOOTH_BASALT.defaultBlockState() : Blocks.AIR.defaultBlockState();
                         mutable.setWithOffset(
                                 closestFullPosition, width * direction.getStepX() + box * clockWise.getStepX(), height, width * direction.getStepZ() + box * clockWise.getStepZ()
                         );
@@ -154,8 +155,8 @@ public class VearthPortalForcer {
     private boolean canHostFrame(final BlockPos origin, final BlockPos.MutableBlockPos mutable, final Direction direction, final int offset) {
         Direction clockWise = direction.getClockWise();
 
-        for (int width = -1; width < 3; width++) {
-            for (int height = -1; height < 4; height++) {
+        for (int width = -1; width < 0; width++) {
+            for (int height = -1; height < 2; height++) {
                 mutable.setWithOffset(
                         origin, direction.getStepX() * width + clockWise.getStepX() * offset, height, direction.getStepZ() * width + clockWise.getStepZ() * offset
                 );

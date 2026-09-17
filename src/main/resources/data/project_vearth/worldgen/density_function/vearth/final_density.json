@@ -46,22 +46,22 @@
                       },
                       "right": {
                         "type": "minecraft:noise",
-                        "noise": "minecraft:calcite",
-                        "xz_scale": 0.001,
-                        "y_scale": 1
+                        "noise": "minecraft:jagged",
+                        "xz_scale": 0,
+                        "y_scale": 1500
                       }
                     },
                     "right": 2
                   },
                   "min_inclusive": -1000000,
-                  "max_exclusive": 0,
+                  "max_exclusive": -1,
                   "when_in_range": {
                     "type": "minecraft:min",
                     "left": "minecraft:overworld/sloped_cheese",
                     "right": {
                       "type": "minecraft:mul",
                       "left": "minecraft:overworld/caves/entrances",
-                      "right": 1
+                      "right": 0.75
                     }
                   },
                   "when_out_of_range": {
@@ -83,7 +83,7 @@
                                 "y_scale": 8
                               }
                             },
-                            "right": 2
+                            "right": 2.1
                           },
                           "right": {
                             "type": "minecraft:add",
@@ -94,10 +94,10 @@
                                 "left": {
                                   "type": "minecraft:noise",
                                   "noise": "minecraft:cave_cheese",
-                                  "xz_scale": 1.25,
-                                  "y_scale": 1
+                                  "xz_scale": 1.5,
+                                  "y_scale": 0.9
                                 },
-                                "right": 0.4
+                                "right": 0.5
                               },
                               "max": 5,
                               "min": -1
@@ -111,10 +111,10 @@
                                   "left": "minecraft:overworld/sloped_cheese",
                                   "right": -0.9
                                 },
-                                "right": 8
+                                "right": 7
                               },
                               "min": -1.125,
-                              "max": 3
+                              "max": 2
                             }
                           }
                         },
@@ -143,7 +143,7 @@
               }
             }
           },
-          "right": 0.64
+          "right": 0.65
         }
       }
     },
